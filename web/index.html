@@ -32,6 +32,8 @@
       <script src="./static/js/spa/spa.js"></script>
 
       <script src="./static/js/pages/login.js"></script>
+      <script src="./static/js/pages/index.js"></script>
+      <script src="./static/js/pages/vehicle-info.js"></script>
 
       <title>Eiger</title>
    </head>
@@ -177,7 +179,7 @@
 
             <!-- Vehicle appbar info -->
             <div class="flex-horizontal-layout">
-               <div class="round-thumbnail size-3" style="background-image: url(./static/res/image/test/test.jpg)"></div>
+               <div id="vehicle-info-photo" class="round-thumbnail size-3"></div>
                <div class="vertical-layout">
                   <span id="vehicle-info-title" class="primary">[title] - [plate]</span>
                   <span id="vehicle-info-description" class="secondary">[year] - [manufacturer] - [type]</span>
@@ -199,7 +201,7 @@
             <!-- Added date output -->
             <div class="row">
                <i class="material-icons">today</i>
-               <span id="vehicle-info-date" class="labeled-output" data-label="registered&nbsp;in">[date]</span>
+               <span id="vehicle-info-date" class="labeled-output" data-label="registered in">[date]</span>
             </div>
          </form>
 
