@@ -61,12 +61,14 @@ function requestVehicles(){
          let card_li = $('<li>');
          card_li.attr("data-id", element.id).addClass('card box raised').appendTo(card_ul);
 
-         // *Building the vehicle's divs:
+         // *Building the vehicle's div:
          let horizontal_layout_div = $('<div>').addClass('info flex-horizontal-layout').appendTo(card_li);
-         let vertical_layout_div = $('<div>').addClass('vertical-layout').appendTo(horizontal_layout_div);
 
          // *Building and setting the vehicle's photo:
          let image_div = $('<div>').addClass('round-thumbnail size-4').css('background-image', 'url('+ rest_url + '/media/v/p/' + element.photo +')').appendTo(horizontal_layout_div);
+
+         // *Building the vehicle's div:
+         let vertical_layout_div = $('<div>').addClass('vertical-layout').appendTo(horizontal_layout_div);
 
          // *Building and setting the vehicle's title and plate:
          let vehicle_title = $('<span>').addClass('primary').text(element.title+" - "+element.plate).appendTo(vertical_layout_div);
