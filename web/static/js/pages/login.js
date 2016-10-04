@@ -1,36 +1,51 @@
+
 // *Global Variables:
+let rest_url = 'http://localhost:3000';
+
 // *Variable of authentication:
 var authenticated = false;
 
-// *When navigate the page Login:
+
+
+// *Browsing the login page:
 spa.onNavigate('login', (page, params) => {
+
+   // *Building the event to the login form:
    $('#login-form').submit((e) => {
 
       // *The default action of the event will not be triggered:
       e.preventDefault();
 
-      // *Retrieves the values of the fields 'Username' and 'Password':
+      // *Retrieving the values of the fields 'Username' and 'Password':
       let text_username = $('#login-username-in').val();
       let text_pass = $('#login-pass-in').val();
 
-      // *Sends to the server Username and Password through the method POST:
+      // *Sending Username and Password to the server through the method POST:
       $.ajax({
-         url: 'http://localhost:3000/auth',
+         url: rest_url + '/auth',
          method: 'POST',
          contentType: 'application/json;charset=UTF-8',
          data: JSON.stringify({login: text_username, pass: text_pass})
       }).done((data, textStatus, xhr) => {
+
+         // *Saving user authentication data:
          saveAuthentication(data);
+
+         // *Setting the variable value for true:
          authenticated = true;
+
+         // *Redirecting the user to index page:
          spa.navigateTo('');
-         console.log('POST Done');
+
       }).fail((xhr, textStatus, err) => {
          console.log(textStatus);
       });
    });
 });
 
-// * The page loading:
+
+
+// *The page loading:
 spa.onReady(() => {
 
    // *Getting name previous page:
@@ -42,7 +57,9 @@ spa.onReady(() => {
    }
 });
 
-// *When navigate the page Auth:
+
+
+// *Browsing the auth page:
 spa.onNavigate('auth', (page, params) => {
 
    // *Getting the key and the token:
@@ -52,37 +69,43 @@ spa.onNavigate('auth', (page, params) => {
    if(auth.token == null || auth.key == null) {
 
       // *If null:
-      // *Send it to the login page Login:
+      // *Redirecting the user to login page:
       spa.navigateTo('login');
+
    } else {
 
       // *If not null:
-      // *Requests authentication:
+      // *Requesting authentication:
       $.ajax({
-         url: 'http://localhost:3000/auth',
+         url: rest_url + '/auth',
          method: 'GET',
          headers: {'Access-Token': auth.token, 'Access-Key': auth.key}
       }).done((data, textStatus, xhr) => {
 
-         // *Set de variable for true:
+         // *Setting the variable value for true:
          authenticated = true;
 
-         // *Send it to the previous page:
+         // *Redirecting the user to previous page:
          spa.navigateTo(params.pagina_anterior);
-      }).fail((xhr, textStatus, err) => {
-         console.log(textStatus);
-      });
 
+      }).fail((xhr, textStatus, err) => {
+
+         // *Redirecting the user to login page:
+         spa.navigateTo('login');
+      });
    }
 });
 
 
-// *When unload the login page:
+
+// *Removing the event after unload the page:
 spa.onUnload('login', (page, params) => {
 
-   // *Remove event submit:
+   // *Removing the event submit:
    $('#login-form').off('submit');
 });
+
+
 
 /**
 * Saves the authentication keys in cache
@@ -97,6 +120,8 @@ function saveAuthentication(data) {
    // *saving key as an access key to the key code in cache:
    localStorage.setItem('key', JSON.stringify(data.user.login));
 }
+
+
 
 /**
 * Recovers the authentication keys in cache
