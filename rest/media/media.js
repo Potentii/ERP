@@ -34,6 +34,7 @@ router.use('/', express.static(media_path));
  * @param  {string} file_name The file name (with extension)
  * @param  {string} directory The directory to remove the media file (under the media folder)
  * @return {Promise}          The removing promise
+ * @author Guilherme Reginaldo Ruella
  */
 function removeMedia(file_name, directory){
    // *Returning the promise:

@@ -8,6 +8,7 @@ class Dialog{
 
       this._onOpen = new HandledEvent();
       this._onDismiss = new HandledEvent();
+      this._onQuickDismiss = undefined;
    }
 
 
@@ -40,5 +41,18 @@ class Dialog{
    // *OnDismiss:
    getOnDismiss(){
       return this._onDismiss;
+   }
+
+   // *OnQuickDismiss:
+   getOnQuickDismiss(){
+      return this._onQuickDismiss;
+   }
+
+   setOnQuickDismiss(onQuickDismiss){
+      if(typeof(onQuickDismiss) === 'function'){
+         this._onQuickDismiss = onQuickDismiss;
+      } else{
+         this._onQuickDismiss = undefined;
+      }
    }
 }

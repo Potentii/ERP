@@ -1,0 +1,66 @@
+[
+   ["login-username", "Usuário"],
+   ["login-password", "Senha"],
+   ["login-login", "Entrar"],
+
+   ["vehicle-info-header", "Veículo"],
+   ["vehicle-info-renavam", "Renavam"],
+   ["vehicle-info-date", "Cadastrado em"],
+   ["vehicle-info-active-true", "Veículo ativo"],
+   ["vehicle-info-active-false", "Veículo inativo"],
+
+   ["vehicle-create-header", "Criar novo veículo"],
+   ["vehicle-create-title", "Título do veículo"],
+   ["vehicle-create-manufacturer", "Fabricante"],
+   ["vehicle-create-type", "Tipo"],
+   ["vehicle-create-year", "Ano"],
+   ["vehicle-create-plate", "Placa"],
+   ["vehicle-create-renavam", "Renavam"],
+   ["vehicle-create-active", "Veículo ativo"],
+
+   ["vehicle-update-header", "Atualizar veículo"],
+   ["vehicle-update-title", "${vehicle-create-title}"],
+   ["vehicle-update-manufacturer", "${vehicle-create-manufacturer}"],
+   ["vehicle-update-type", "${vehicle-create-type}"],
+   ["vehicle-update-year", "${vehicle-create-year}"],
+   ["vehicle-update-plate", "${vehicle-create-plate}"],
+   ["vehicle-update-renavam", "${vehicle-create-renavam}"],
+   ["vehicle-update-active", "${vehicle-create-active}"],
+
+   ["schedules-header", "Reservas"],
+
+   ["schedule-info-header", "Reserva"],
+   ["schedule-info-reason", "Motivo"],
+   ["schedule-info-duration", "Duração"],
+   ["schedule-info-date", "Reservado em"],
+
+   ["schedule-create-header", "Cadastrar nova reserva"],
+   ["schedule-create-reason", "Motivo"],
+   ["schedule-create-start-date", "Data de início"],
+   ["schedule-create-start-time", "Hora de início"],
+   ["schedule-create-end-date", "Data de término"],
+   ["schedule-create-end-time", "Hora de término"],
+
+   ["schedule-update-header", "Modificar reserva"],
+   ["schedule-update-reason", "${schedule-create-reason}"],
+   ["schedule-update-start-date", "${schedule-create-start-date}"],
+   ["schedule-update-start-time", "${schedule-create-start-time}"],
+   ["schedule-update-end-date", "${schedule-create-end-date}"],
+   ["schedule-update-end-time", "${schedule-create-end-time}"],
+
+   ["default-notice-ok", "ok"],
+
+   ["default-consent-no", "não"],
+   ["default-consent-yes", "sim"],
+
+   ["default-retry-cancel", "cancelar"],
+   ["default-retry-retry", "tentar denovo"],
+
+   ["user-picker-header", "Escolha um usuário"],
+   ["user-picker-cancel", "cancelar"],
+   ["user-picker-ok", "ok"],
+
+   ["vehicle-picker-header", "Escolha um veículo"],
+   ["vehicle-picker-cancel", "cancelar"],
+   ["vehicle-picker-ok", "ok"]
+]

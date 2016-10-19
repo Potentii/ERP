@@ -1,13 +1,13 @@
 
 // *Global Variables:
-let rest_url = 'http://localhost:3000';
+const rest_url = 'http://localhost:3000';
 
 
 /**
  * Module that makes requests to the rest server
  * @namespace REQUEST
  */
-var request = (function(){
+const request = (function(){
 
 
 
@@ -19,7 +19,27 @@ var request = (function(){
    function retrieveAccessCredentials() {
       let token = JSON.parse(localStorage.getItem('token'));
       let key = JSON.parse(localStorage.getItem('key'));
-      return {token: token, key: key};
+      let id = JSON.parse(localStorage.getItem('id'));
+      return {token: token, key: key, id: id};
+   }
+
+
+
+   /**
+   * Saves the authentication keys in cache
+   * @param  {object} data The token and the user key
+   * @author Ralf Pablo Braga Soares
+   */
+   function saveAuthentication(data) {
+
+      // *Setting token as an access key to the token code in cache:
+      localStorage.setItem('token', JSON.stringify(data.token));
+
+      // *Saving id as an access key to the id code in cache:
+      localStorage.setItem('id', JSON.stringify(data.user.id));
+
+      // *Setting key as an access key to the key code in cache:
+      localStorage.setItem('key', JSON.stringify(data.user.login));
    }
 
 
@@ -446,6 +466,26 @@ var request = (function(){
 
 
    /**
+    * Revokes the current user access credentials
+    * @return {jqXHR}  The ajax request
+    * @author Guilherme Reginaldo Ruella
+    */
+   function deleteAuth(){
+
+      // *Getting the key and the token:
+      let auth = retrieveAccessCredentials();
+
+      // *Returning the request:
+      return $.ajax({
+         url: rest_url + '/auth',
+         method: 'DELETE',
+         headers: {'Access-Token': auth.token, 'Access-Key': auth.key}
+      });
+   }
+
+
+
+   /**
    * Returns the send message and deletes the user
    * @param  {number} id User id
    * @return {jqXHR}     The ajax request
@@ -534,10 +574,12 @@ var request = (function(){
       putVehicle: putVehicle,
       putSchedule: putSchedule,
 
+      deleteAuth: deleteAuth,
       deleteUser: deleteUser,
       deleteVehicle: deleteVehicle,
       deleteSchedule: deleteSchedule,
 
-      retrieveAccessCredentials: retrieveAccessCredentials
+      retrieveAccessCredentials: retrieveAccessCredentials,
+      saveAuthentication: saveAuthentication
    };
 })();

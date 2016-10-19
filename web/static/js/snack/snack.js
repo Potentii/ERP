@@ -4,13 +4,13 @@
  * Module that manages the Snackbar
  * @namespace Snack
  */
-var snack = (function(){
+const snack = (function(){
    let $snackbar;
    let $message;
    let $button;
 
    let curr_timer;
-   let fade_animation_time = 350;
+   let fade_animation_time = 250;
 
    // *Defining the queueing process:
    let queue = new AutoConsumableQueue((snack) => {
@@ -30,7 +30,7 @@ var snack = (function(){
       if(snack.button_text && snack.action){
          // *If they are:
          // *Showing the button:
-         $button.show();
+         $button.css('visibility', 'visible');
          // *Setting the button text:
          $button.text(snack.button_text);
          // *Setting the action:
@@ -43,7 +43,7 @@ var snack = (function(){
       } else{
          // *If they not:
          // *Hidding the button:
-         $button.hide();
+         $button.css('visibility', 'hidden');
       }
 
       // *Showing the snackbar:
@@ -92,7 +92,7 @@ var snack = (function(){
     * @param  {function} action    The button action
     * @author Guilherme Reginaldo Ruella
     */
-   function show(message, time, button_text, action){
+   function open(message, time, button_text, action){
       // *Queueing up the snack:
       queue.add({
          message: message,
@@ -109,7 +109,13 @@ var snack = (function(){
       // *Getting the elements references:
       $snackbar = $('#snackbar');
       $message = $('#snackbar > span');
-      $button = $('#snackbar > button');
+      $button = $('#snackbar > button:nth-of-type(1)');
+
+      // *When user clicks on dismiss button:
+      $('#snackbar > button:nth-of-type(2)').on('click', e => {
+         // *Dismissing this snakcbar:
+         dismiss();
+      });
 
       // *Setting up the fading animation duration:
       $snackbar.css('animation-duration', (fade_animation_time/1000) + 's');
@@ -119,7 +125,7 @@ var snack = (function(){
 
    // *Exporting the module:
    return {
-      show: show,
+      open: open,
       dismiss: dismiss,
       TIME_SHORT: 4000,
       TIME_LONG: 8000

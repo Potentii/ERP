@@ -16,7 +16,7 @@ module.exports = (req, res, next) => {
       // *If it hasn't:
       // *Sending unauthorize response:
       res.status(401)
-         .send('Invalid access credentials')
+         .json({err_code: 'ERR_INVALID_CREDENTIALS', err_message: 'Invalid access credentials'})
          .end();
       return;
    }
@@ -35,7 +35,7 @@ module.exports = (req, res, next) => {
             // *If not:
             // *Sending unauthorize response:
             res.status(401)
-               .send('Invalid access credentials')
+               .json({err_code: 'ERR_INVALID_CREDENTIALS', err_message: 'Invalid access credentials'})
                .end();
 
          }
@@ -44,7 +44,7 @@ module.exports = (req, res, next) => {
          // *If some error occured:
          // *Sending internal error response:
          res.status(500)
-            .send('Something went wrong')
+            .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
             .end();
       });
 };

@@ -19,7 +19,7 @@ function retrieveAll(req, res, next){
          // *If something went wrong:
          // *Sending a 500 error response:
          res.status(500)
-            .send('Something went wrong')
+            .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
             .end();
       });
 }
@@ -48,7 +48,7 @@ function retrieve(req, res, next){
             // *If not:
             // *Sending a 404 response:
             res.status(404)
-               .send('Resource not found')
+               .json({err_code: 'ERR_NOT_FOUND', err_message: 'Resource not found'})
                .end();
          }
       })
@@ -56,7 +56,7 @@ function retrieve(req, res, next){
          // *If something went wrong:
          // *Sending a 500 error response:
          res.status(500)
-            .send('Something went wrong')
+            .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
             .end();
       });
 }
@@ -86,19 +86,19 @@ function create(req, res, next){
          case 'ER_NO_DEFAULT_FOR_FIELD':
             // *Sending a 400 error response:
             res.status(400)
-               .send('Missing required field')
+               .json({err_code: 'ERR_MISSING_FIELD', err_message: 'Missing required field'})
                .end();
             break;
          case 'ER_DUP_ENTRY':
             // *Sending a 400 error response:
             res.status(400)
-               .send('The resource already exists')
+               .json({err_code: 'ERR_DUPLICATE_FIELD', err_message: 'The resource already exists'})
                .end();
             break;
          default:
             // *Sending a 500 error response:
             res.status(500)
-               .send('Something went wrong')
+               .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
                .end();
          }
       });
@@ -130,7 +130,7 @@ function update(req, res, next){
             // *If it wasn't:
             // *Sending a 404 response:
             res.status(404)
-               .send('Resource not found')
+               .json({err_code: 'ERR_NOT_FOUND', err_message: 'Resource not found'})
                .end();
          }
       })
@@ -141,13 +141,13 @@ function update(req, res, next){
          case 'ER_DUP_ENTRY':
             // *Sending a 400 error response:
             res.status(400)
-               .send('The resource already exists')
+               .json({err_code: 'ERR_DUPLICATE_FIELD', err_message: 'The resource already exists'})
                .end();
             break;
          default:
             // *Sending a 500 error response:
             res.status(500)
-               .send('Something went wrong')
+               .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
                .end();
          }
       });
@@ -176,16 +176,26 @@ function erase(req, res, next){
             // *If it wasn't:
             // *Sending a 404 response:
             res.status(404)
-               .send('Resource not found')
+               .json({err_code: 'ERR_NOT_FOUND', err_message: 'Resource not found'})
                .end();
          }
       })
       .catch(err => {
          // *If something went wrong:
-         // *Sending a 500 error response:
-         res.status(500)
-            .send('Something went wrong')
-            .end();
+         // *Checking the error code:
+         switch(err.code){
+         case 'ER_ROW_IS_REFERENCED_2':
+            // *Sending a 409 error response:
+            res.status(409)
+               .json({err_code: 'ERR_REF_LEFT', err_message: 'The resource has dependencies left'})
+               .end();
+            break;
+         default:
+            // *Sending a 500 error response:
+            res.status(500)
+               .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
+               .end();
+         }
       });
 }
 

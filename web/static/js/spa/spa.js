@@ -4,7 +4,7 @@
  * Module that manages and handles all the pages
  * @namespace SPA
  */
-var spa = (function(){
+const spa = (function(){
    var spa_loaded = false;
    var ready_event = new HandledEvent();
 

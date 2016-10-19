@@ -12,11 +12,7 @@ spa.subscribe(new Page('vehicle-update'));
 spa.subscribe(new Page('schedules'));
 spa.subscribe(new Page('schedule-info'));
 spa.subscribe(new Page('schedule-create'));
+spa.subscribe(new Page('schedule-update'));
 
 // *Setting the fallback page:
 spa.setFallbackPage('fallback');
-
-// *When SPA system is ready:
-spa.onReady(() => {
-   console.log('SPA is ready');
-});

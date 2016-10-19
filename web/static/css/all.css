@@ -95,7 +95,7 @@ section > .list{
 /**
  * Snackbar button color correction
  */
-.snackbar > button{
+.snackbar > button:nth-of-type(1){
    color: #9575CD;
 }
 
@@ -133,6 +133,40 @@ section > .list{
 
 /**
  * MDL color correction
+ */
+
+
+/**
+ * MDL checkbox
+ */
+/**
+ * Ckeckbox fill
+ */
+.mdl-checkbox.is-checked .mdl-checkbox__tick-outline{
+   background-color: var(--accent-color);
+}
+/**
+ * Checkbox outline (unchecked)
+ */
+.mdl-checkbox__box-outline{
+   border-color: var(--bg-color-contrast-icon);
+}
+/**
+ * Checkbox outline (checked)
+ */
+.mdl-checkbox.is-checked .mdl-checkbox__box-outline{
+   border-color: var(--accent-color);
+}
+/**
+ * Checkbox ripple
+ */
+.mdl-checkbox__ripple-container .mdl-ripple{
+   background: var(--accent-color);
+}
+
+
+/**
+ * MDL input
  */
 /**
  * MDL input floating label color (focus)

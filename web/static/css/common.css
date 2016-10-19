@@ -289,6 +289,9 @@ body{
 .size-4{min-width: 4em; max-width: 4em; width: 4em; min-height: 4em; max-height: 4em; height: 4em;}
 .size-6{min-width: 6em; max-width: 6em; width: 6em; min-height: 6em; max-height: 6em; height: 6em;}
 
+.thumbnailed-info > .round-thumbnail{
+	margin-right: 1em;
+}
 
 .middle{
 	vertical-align: middle;
@@ -390,7 +393,7 @@ button.raised:active, a.raised:active, .dragging.raised {
  */
 .form > .row{
 	display: flex;
-	align-items: baseline;
+	align-items: top;
 	justify-content: flex-start;
 
 	max-width: 100%;
@@ -455,15 +458,11 @@ button.raised:active, a.raised:active, .dragging.raised {
 	font-size: 1em;
 	color: var(--bg-color-contrast);
 }
-.labeled-output::before{
-	content: attr(data-label);
-	position: absolute;
-	top: -1.5em;
-	left: 0;
-
+.output-label{
 	font-size: 0.8em;
 	color: var(--bg-color-contrast-faded);
 }
+
 
 
 
@@ -550,18 +549,30 @@ li .secondary{
 }
 
 
-/*
-.black-screen{
-	position: fixed;
-	top: 0;
-	left: 0;
-	background: rgba(0, 0, 0, 0.8);
+
+/* ========== * ========== * ========== * ==========
+ * Flat buttons
+ * ========== * ========== * ========== * ==========
+ */
+/**
+ * Flat button
+ */
+.flat-button{
+	position: relative;
+	padding: 1em;
+	color: var(--bg-color-contrast);
 }
-.black-screen.main{
-	z-index: 8;
-	padding: 2em;
+.flat-button:not(.material-icons){
+	text-transform: uppercase;
 }
-*/
+.flat-button.highlighted{
+	color: var(--accent-color);
+   font-weight: bold;
+}
+.flat-button:disabled{
+	color: var(--bg-color-contrast-faded);
+	opacity: 0.5;
+}
 
 
 
@@ -573,6 +584,7 @@ li .secondary{
  * Dialog overlay container
  */
 .dialogs{
+	opacity: 0;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -587,11 +599,13 @@ li .secondary{
  * Dialog
  */
 .dialog{
+	opacity: 0;
 	max-height: 100%;
 	width: 50vw;
 	margin: auto;
 	height: auto;
 	background: var(--bg-color);
+	transform: translateY(5em);
 }
 @media handheld, (max-width: 25em), (max-height: 25em){
 	.dialog{
@@ -614,7 +628,7 @@ li .secondary{
 	}
 }
 
-/*
+/**
  *	Dialog buttons:
  */
 .dialog > .flat-button-container{
@@ -627,37 +641,92 @@ li .secondary{
 	flex-shrink: 0;
 }
 .dialog > .flat-button-container > *{
-	position: relative;
 	padding: 1em 2.5em;
 	height: 100%;
 	flex-grow: 0;
 }
 .dialog > .flat-button-container > .material-icons{
-	font-size: 1.5em;
+	font-size: 1.3em;
 }
 
-
-
-/* ========== * ========== * ========== * ==========
- * Flat buttons
- * ========== * ========== * ========== * ==========
- */
 /**
- * Flat button
+ * Default dialogs' text:
  */
-.flat-button{
-	position: relative;
-	padding: 1em;
-	color: var(--bg-color-contrast);
-	text-transform: uppercase;
+.default-dialog-text{
+	padding: 0 1.8em 2em 1.8em;
+	font-size: 1.1em;
+	white-space: pre-wrap;
 }
-.flat-button.highlighted{
-	color: var(--accent-color);
-   font-weight: bold;
+
+@media handheld, (max-width: 25em), (max-height: 25em){
+	.dialog > .flat-button-container{
+		margin-top: auto;
+		bottom: 0;
+	}
 }
-.flat-button:disabled{
-	color: var(--bg-color-contrast-faded);
-	opacity: 0.5;
+
+/**
+ * Dialog animation:
+ */
+.dialog:not(.active){
+	animation: dialogFadeOff;
+	animation-timing-function: ease;
+}
+.dialog.active{
+	animation: dialogFadeIn;
+	animation-timing-function: ease;
+	animation-fill-mode: forwards;
+}
+
+.dialogs:not(.active){
+	animation: dialogContainerFadeOff;
+	animation-timing-function: ease;
+}
+.dialogs.active{
+	animation: dialogContainerFadeIn;
+	animation-timing-function: ease;
+	animation-fill-mode: forwards;
+}
+
+/**
+ * Dialog keyframes:
+ */
+@keyframes dialogFadeIn{
+	0% {
+		opacity: 0;
+		transform: translateY(5em);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+@keyframes dialogFadeOff{
+	0% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(5em);
+	}
+}
+
+@keyframes dialogContainerFadeIn{
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@keyframes dialogContainerFadeOff{
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
 
 
@@ -691,12 +760,20 @@ li .secondary{
 	padding: 0.5em 2em 0.5em 0;
 	color: #FAFAFA;
 }
-.snackbar > button{
+.snackbar > button:nth-of-type(1){
 	flex-grow: 0;
 	flex-shrink: 0;
-	padding: 1.6em 2em;
+	padding: 1.6em 1em;
 	text-transform: uppercase;
 	color: var(--accent-color);
+}
+.snackbar > button:nth-of-type(2){
+	flex-grow: 0;
+	flex-shrink: 0;
+	padding: 0.5em;
+	margin: 0 0.6em;
+	font-size: 1.2em;
+	color: #FAFAFA;
 }
 
 /**

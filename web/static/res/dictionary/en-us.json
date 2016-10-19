@@ -1,0 +1,66 @@
+[
+   ["login-username", "Username"],
+   ["login-password", "Password"],
+   ["login-login", "Login"],
+
+   ["vehicle-info-header", "Vehicle"],
+   ["vehicle-info-renavam", "Renavam"],
+   ["vehicle-info-date", "Registered in"],
+   ["vehicle-info-active-true", "Vehicle is active"],
+   ["vehicle-info-active-false", "Vehicle inactive"],
+
+   ["vehicle-create-header", "Create new vehicle"],
+   ["vehicle-create-title", "Vehicle title"],
+   ["vehicle-create-manufacturer", "Manufacturer"],
+   ["vehicle-create-type", "Type"],
+   ["vehicle-create-year", "Year"],
+   ["vehicle-create-plate", "Licence plate"],
+   ["vehicle-create-renavam", "Renavam"],
+   ["vehicle-create-active", "Vehicle is active"],
+
+   ["vehicle-update-header", "Update vehicle"],
+   ["vehicle-update-title", "${vehicle-create-title}"],
+   ["vehicle-update-manufacturer", "${vehicle-create-manufacturer}"],
+   ["vehicle-update-type", "${vehicle-create-type}"],
+   ["vehicle-update-year", "${vehicle-create-year}"],
+   ["vehicle-update-plate", "${vehicle-create-plate}"],
+   ["vehicle-update-renavam", "${vehicle-create-renavam}"],
+   ["vehicle-update-active", "${vehicle-create-active}"],
+
+   ["schedules-header", "Schedules"],
+
+   ["schedule-info-header", "Schedule"],
+   ["schedule-info-reason", "Reason"],
+   ["schedule-info-duration", "Duration"],
+   ["schedule-info-date", "Booked on"],
+
+   ["schedule-create-header", "Book new schedule"],
+   ["schedule-create-reason", "Reason"],
+   ["schedule-create-start-date", "Start date"],
+   ["schedule-create-start-time", "Start time"],
+   ["schedule-create-end-date", "End date"],
+   ["schedule-create-end-time", "End time"],
+
+   ["schedule-update-header", "Edit schedule"],
+   ["schedule-update-reason", "${schedule-create-reason}"],
+   ["schedule-update-start-date", "${schedule-create-start-date}"],
+   ["schedule-update-start-time", "${schedule-create-start-time}"],
+   ["schedule-update-end-date", "${schedule-create-end-date}"],
+   ["schedule-update-end-time", "${schedule-create-end-time}"],
+
+   ["default-notice-ok", "ok"],
+
+   ["default-consent-no", "no"],
+   ["default-consent-yes", "yes"],
+
+   ["default-retry-cancel", "cancel"],
+   ["default-retry-retry", "retry"],
+
+   ["user-picker-header", "Select an user"],
+   ["user-picker-cancel", "cancel"],
+   ["user-picker-ok", "ok"],
+
+   ["vehicle-picker-header", "Select a vehicle"],
+   ["vehicle-picker-cancel", "cancel"],
+   ["vehicle-picker-ok", "ok"]
+]

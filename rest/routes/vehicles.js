@@ -19,7 +19,7 @@ function retrieveAll(req, res, next){
          // *If something went wrong:
          // *Sending a 500 error response:
          res.status(500)
-            .send('Something went wrong')
+            .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
             .end();
       });
 }
@@ -48,7 +48,7 @@ function retrieve(req, res, next){
             // *If not:
             // *Sending a 404 response:
             res.status(404)
-               .send('Resource not found')
+               .json({err_code: 'ERR_NOT_FOUND', err_message: 'Resource not found'})
                .end();
          }
       })
@@ -56,7 +56,7 @@ function retrieve(req, res, next){
          // *If something went wrong:
          // *Sending a 500 error response:
          res.status(500)
-            .send('Something went wrong')
+            .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
             .end();
       });
 }
@@ -103,19 +103,19 @@ function create(req, res, next){
                   case 'ER_NO_DEFAULT_FOR_FIELD':
                      // *Sending a 400 error response:
                      res.status(400)
-                        .send('Missing required field')
+                        .json({err_code: 'ERR_MISSING_FIELD', err_message: 'Missing required field'})
                         .end();
                      break;
                   case 'ER_DUP_ENTRY':
                      // *Sending a 400 error response:
                      res.status(400)
-                        .send('The resource already exists')
+                        .json({err_code: 'ERR_DUPLICATE_FIELD', err_message: 'The resource already exists'})
                         .end();
                      break;
                   default:
                      // *Sending a 500 error response:
                      res.status(500)
-                        .send('Something went wrong')
+                        .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
                         .end();
                   }
 
@@ -131,7 +131,7 @@ function create(req, res, next){
       .catch(err => {
          // *Sending a 500 error response:
          res.status(500)
-            .send('Something went wrong')
+            .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
             .end();
       });
 }
@@ -151,7 +151,7 @@ function update(req, res, next){
    // *Getting the body of the request:
    let values = req.body;
    // *Getting the Base64 encoded photo:
-   let base64_file = values.photo || undefined;
+   let base64_file = values.photo;
 
 
    // *Inserting the photo inside the media system:
@@ -163,8 +163,16 @@ function update(req, res, next){
          // *Starting the photo removing promise:
          new Promise((resolve, reject) => {
 
-            // *Changing the photo to the created file name:
-            values.photo = file_name;
+            // *Checking if a new file was created:
+            if(file_name){
+               // *If it was:
+               // *Changing the photo to the created file name:
+               values.photo = file_name;
+            } else{
+               // *If it wasn't:
+               // *Removing the photo attribute:
+               delete values.photo;
+            }
 
             // *Querying for the last photo:
             pooler.query('select ?? from ?? where ?? = ?', ['photo', 'vehicle', 'id', id])
@@ -188,7 +196,7 @@ function update(req, res, next){
                            // *If it wasn't:
                            // *Sending a 404 response:
                            res.status(404)
-                              .send('Resource not found')
+                              .json({err_code: 'ERR_NOT_FOUND', err_message: 'Resource not found'})
                               .end();
 
                            // *Rejecting the promise:
@@ -202,13 +210,13 @@ function update(req, res, next){
                         case 'ER_DUP_ENTRY':
                            // *Sending a 400 error response:
                            res.status(400)
-                              .send('The resource already exists')
+                              .json({err_code: 'ERR_DUPLICATE_FIELD', err_message: 'The resource already exists'})
                               .end();
                            break;
                         default:
                            // *Sending a 500 error response:
                            res.status(500)
-                              .send('Something went wrong')
+                              .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
                               .end();
                         }
 
@@ -219,7 +227,7 @@ function update(req, res, next){
                .catch(err => {
                   // *Sending a 500 error response:
                   res.status(500)
-                     .send('Something went wrong')
+                     .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
                      .end();
 
                   // *Rejecting the promise:
@@ -227,8 +235,12 @@ function update(req, res, next){
                });
          })
          .then(() => {
-            // *Removing the last photo:
-            media.removeVehiclePhoto(last_photo_name);
+            // *Checkinf if a new file was created:
+            if(file_name){
+               // *If it was:
+               // *Removing the last photo:
+               media.removeVehiclePhoto(last_photo_name);
+            }
          })
          .catch(() => {
             // *Reverting the file insertion:
@@ -238,7 +250,7 @@ function update(req, res, next){
       .catch(err => {
          // *Sending a 500 error response:
          res.status(500)
-            .send('Something went wrong')
+            .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
             .end();
       });
 }
@@ -252,7 +264,7 @@ function update(req, res, next){
 function erase(req, res, next){
    // *Requesting the media system:
    const media = require('../media/media');
-   
+
    // *Getting the id from request params:
    let id = req.params.id;
 
@@ -280,7 +292,7 @@ function erase(req, res, next){
                      // *If it wasn't:
                      // *Sending a 404 response:
                      res.status(404)
-                        .send('Resource not found')
+                        .json({err_code: 'ERR_NOT_FOUND', err_message: 'Resource not found'})
                         .end();
 
                      // *Rejecting the promise:
@@ -289,10 +301,20 @@ function erase(req, res, next){
                })
                .catch(err => {
                   // *If something went wrong:
-                  // *Sending a 500 error response:
-                  res.status(500)
-                     .send('Something went wrong')
-                     .end();
+                  // *Checking the error code:
+                  switch(err.code){
+                  case 'ER_ROW_IS_REFERENCED_2':
+                     // *Sending a 409 error response:
+                     res.status(409)
+                        .json({err_code: 'ERR_REF_LEFT', err_message: 'The resource has dependencies left'})
+                        .end();
+                     break;
+                  default:
+                     // *Sending a 500 error response:
+                     res.status(500)
+                        .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
+                        .end();
+                  }
 
                   // *Rejecting the promise:
                   reject();
@@ -306,7 +328,7 @@ function erase(req, res, next){
       .catch(err => {
          // *Sending a 500 error response:
          res.status(500)
-            .send('Something went wrong')
+            .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
             .end();
       });
 }

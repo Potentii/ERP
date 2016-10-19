@@ -41,4 +41,15 @@ class AutoConsumableQueue{
          this.isConsuming = false;
       }
    }
+
+
+
+   /**
+    * Verifies if there is another item left on the queue
+    * @return {boolean}  True if there is, false otherwise
+    * @author Guilherme Reginaldo Ruella
+    */
+   hasNext(){
+      return this.queue.length?true:false;
+   }
 }

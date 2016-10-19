@@ -29,7 +29,7 @@ pool.on('enqueue', () => {
  * @author Guilherme Reginaldo Ruella
  */
 function query(sql, values){
-   // TODO try to log errors on catch handler:
+   // TODO try to log errors on this promise's catch handler:
    // *Returning the query promise:
    return new Promise((resolve, reject) => {
 
@@ -37,8 +37,11 @@ function query(sql, values){
       pool.getConnection((err, conn) => {
          // *Checking if something went wrong:
          if(err){
-            // *If it was, rejecting the promise:
+            // *If it was:
+
+            // *Rejecting the promise:
             reject(err);
+
             // *Logging the error on console:
             console.log(err);
             return;
@@ -51,15 +54,25 @@ function query(sql, values){
 
             // *Checking if something went wrong:
             if(err){
-               // *If it was, rejecting the promise:
+               // *If it was:
+
+               // *Checking if it is a custom throwed exception:
+               if(err.code === 'ER_SIGNAL_EXCEPTION'){
+                  // *If it is:
+                  // *Setting the code to hold the error 'message_text' value:
+                  err.code = err.message.replace('ER_SIGNAL_EXCEPTION: ', '');
+               }
+
+               // *Rejecting the promise:
                reject(err);
+
                // *Logging the error on console:
                console.log(err);
                return;
             }
 
             // *Resolving the promise:
-            resolve({rows: result, fields: fields}); //TODO try to pass as separated parameters instead of an object
+            resolve({rows: result, fields: fields});
          });
 
       });

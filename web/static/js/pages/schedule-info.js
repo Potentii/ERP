@@ -36,7 +36,7 @@ spa.onNavigate('schedule-info', (page, params) => {
 
                // *Setting the schedule's create date:
                let create_date = new Date(data.date);
-               $('#schedule-info-date').text(df.asShortDate(create_date));
+               $('#schedule-info-date').text(df.asFullDate(create_date));
 
                // *Showing the vehicle in app bar:
                request.getVehicle(data.id_vehicle_fk)
@@ -67,6 +67,30 @@ spa.onNavigate('schedule-info', (page, params) => {
                         console.log(textStatus);
                      });
             });
+
+
+            // *removing scheduling
+            $('#schedule-info-delete-fab').on('click', function(){
+               let id = params.id;
+
+               // *Sending a request to delete the schedule:
+               request.deleteSchedule(id)
+                  .done((data, textStatus, xhr) => {
+
+                  // *Navigating to index page:
+                  spa.navigateTo('');
+                  })
+                  .fail((xhr, textStatus, err) => {
+                     console.log(textStatus);
+                  });
+               });
+
+
+               // *When a user to click in update button:
+               $('#schedule-info-edit-fab').on('click', function(){
+                  // *Sending the id of the schedule-update by parameter:
+                  spa.navigateTo('schedule-update', {id: id});
+               });
      }
    } else {
       // *Is not diferent of null ou undefined:
@@ -75,23 +99,9 @@ spa.onNavigate('schedule-info', (page, params) => {
    }
 });
 
-// *removing scheduling
-$('#schedule-info-delete-fab').on('click', function(){
-   let id = params.id;
-
-   // *Sending a request to delete the schedule:
-   request.deleteSchedule(id)
-      .done((data, textStatus, xhr) => {
-
-         // *Navigating to index page:
-         spa.navigateTo('');
-      })
-       .fail((xhr, textStatus, err) => {
-         console.log(textStatus);
-      });
-});
 
 spa.onUnload('schedule-info', (page, params) => {
    // *Removing the event click:
    $('#schedule-info-delete-fab').off('click');
+   $('#schedule-info-edit-fab').off('click');
 });

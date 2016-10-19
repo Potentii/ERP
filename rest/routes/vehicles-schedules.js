@@ -22,7 +22,7 @@ function retrieveAll(req, res, next){
          // *If something went wrong:
          // *Sending a 500 error response:
          res.status(500)
-            .send('Something went wrong')
+            .json({err_code: 'ERR_INTERNAL', err_message: 'Something went wrong'})
             .end();
       });
 }
