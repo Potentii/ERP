@@ -74,3 +74,24 @@ spa.onNavigate('schedule-info', (page, params) => {
       spa.navigateTo('schedules');
    }
 });
+
+// *removing scheduling
+$('#schedule-info-delete-fab').on('click', function(){
+   let id = params.id;
+
+   // *Sending a request to delete the schedule:
+   request.deleteSchedule(id)
+      .done((data, textStatus, xhr) => {
+
+         // *Navigating to index page:
+         spa.navigateTo('');
+      })
+       .fail((xhr, textStatus, err) => {
+         console.log(textStatus);
+      });
+});
+
+spa.onUnload('schedule-info', (page, params) => {
+   // *Removing the event click:
+   $('#schedule-info-delete-fab').off('click');
+});

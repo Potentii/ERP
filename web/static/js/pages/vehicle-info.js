@@ -31,10 +31,32 @@ spa.onNavigate('vehicle-info', (page, params) => {
             .fail((xhr, textStatus, err) => {
                console.log(textStatus);
             });
+
+
+         // *Clicking on a schedule's button:
+         $('#vehicle-info-delete-fab').on('click', function(){
+            let id = params.id;
+
+            // *Sending a request to delete the vehicle:
+            request.deleteVehicle(id)
+               .done((data, textStatus, xhr) => {
+
+                  // *Navigating to index page:
+                  spa.navigateTo('');
+               })
+               .fail((xhr, textStatus, err) => {
+                  console.log(textStatus);
+               });
+         });
       }
    } else {
       // *Is not diferent of null ou undefined:
       // *Redirecting the user to index page:
       spa.navigateTo('');
    }
+});
+
+spa.onUnload('vehicle-info', (page, params) => {
+   // *Removing the event click:
+   $('#vehicle-info-delete-fab').off('click');
 });
