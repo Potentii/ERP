@@ -1,0 +1,9 @@
+#fallback-section{
+   background: var(--primary-color);
+}
+
+#fallback-section > div{
+   margin: 3em auto;
+   font-size: 1.6em;
+   color: var(--primary-color-contrast);
+}

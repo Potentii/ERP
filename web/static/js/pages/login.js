@@ -22,10 +22,10 @@ spa.onNavigate('login', (page, params) => {
       let object_data = {login: text_username, pass: text_pass};
 
       request.postAuth(object_data)
-         .done((data, textStatus, xhr) => {
+         .done(data => {
 
             // *Saving user authentication data:
-            request.saveAuthentication(data);
+            request.saveAccessInfo({id: data.user.id, key: data.user.login, token: data.token});
 
             // *Setting the variable value for true:
             authenticated = true;
@@ -33,8 +33,8 @@ spa.onNavigate('login', (page, params) => {
             // *Redirecting the user to index page:
             spa.navigateTo('');
          })
-         .fail((xhr, textStatus, err) => {
-            console.log(textStatus);
+         .fail(xhr => {
+            console.log(xhr.responseJSON);
          });
    });
 });
@@ -59,7 +59,7 @@ spa.onReady(() => {
 spa.onNavigate('auth', (page, params) => {
 
    // *Getting the key and the token:
-   let auth = request.retrieveAccessCredentials();
+   let auth = request.retrieveAccessInfo();
 
    // *Checking if the token or key is null:
    if(auth.token == null || auth.key == null) {
@@ -76,14 +76,14 @@ spa.onNavigate('auth', (page, params) => {
       // *If it is:
       // *Requesting for the user authentication:
       request.getAuth()
-         .done((data, textStatus, xhr) => {
+         .done(data => {
 
             // *Setting the authenticated variable value as true:
             authenticated = true;
             // *Redirecting the user to previous page:
             spa.navigateTo(params.previous_page_name);
          })
-         .fail((xhr, textStatus, err) => {
+         .fail(xhr => {
 
             // *Redirecting the user to login page:
             spa.navigateTo('login');

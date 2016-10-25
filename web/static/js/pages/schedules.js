@@ -5,7 +5,7 @@
 spa.onNavigate('schedules', (page, params) => {
 
    // *Checking if the params is diferent undefined ou null:
-   if(params && (params.id !== null && params.id !== undefined)){
+   if(params && (params.id !== null && params.id !== undefined) && (params.date !== null && params.date !== undefined)){
       let id = params.id;
       let date = params.date;
 
@@ -14,7 +14,7 @@ spa.onNavigate('schedules', (page, params) => {
          // *If true:
          // *Showing the vehicle in app bar:
          request.getVehicle(id, date)
-            .done((data, textStatus, xhr) => {
+            .done(data => {
 
                // *Setting the vehicle's photo:
                $('#schedules-vehicle-photo').css('background-image', 'url(' + rest_url + '/media/v/p/' + data.photo + ')');
@@ -28,41 +28,54 @@ spa.onNavigate('schedules', (page, params) => {
                // *Setting the vehicle schedule date:
                $('#schedules-vehicle-date').text(df.asFullDate(new Date(date + ' 00:00:00')));
 
+               // *Checking if the vehicle is active:
+               if(data.active){
+                  // *If it is:
+                  // *Showing the 'Add schedules' FAB:
+                  $('#schedules-create-done-fab').show();
+               } else{
+                  // *If it isn't:
+                  // *Hiding the 'Add schedules' FAB:
+                  $('#schedules-create-done-fab').hide();
+               }
             })
-            .fail((xhr, textStatus, err) => {
-               console.log(textStatus);
+            .fail(xhr => {
+               console.log(xhr.responseJSON);
             });
 
          // *Listing the reserves of that vehicle:
          request.getVehiclesReservationsOnDate(id, date)
-            .done((data, textStatus, xhr) => {
+            .done(data => {
 
                // *Building the schedule's ul:
                let schedules_ul = $('#schedules-list');
 
+               // *Checking if the list is empty, adding the empty class if it is:
+               if(!data.length) schedules_ul.addClass('empty');
+
                // *Iterating and creating the schedules list:
-               data.forEach(function(element, index){
+               data.forEach(function(reservations){
 
                   // *Building the schedule's li:
-                  let schedules_li = $('<li>').attr('data-id', element.schedule.id).addClass('card box raised').appendTo(schedules_ul);
+                  let schedules_li = $('<li>').attr('data-id', reservations.schedule.id).addClass('card box raised').appendTo(schedules_ul);
 
                   // *Building the schedule's div:
                   let vertical_layout_div = $('<div>').addClass('user vertical-layout').appendTo(schedules_li);
 
                   // *Building and setting the name and reason of the user:
-                  let schedules_user = $('<span>').addClass('primary').text(element.user.name).appendTo(vertical_layout_div);
-                  let schedules_reason = $('<span>').addClass('secondary').text(element.schedule.reason).appendTo(vertical_layout_div);
+                  let schedules_user = $('<span>').addClass('primary').text(reservations.user.name).appendTo(vertical_layout_div);
+                  let schedules_reason = $('<span>').addClass('secondary').text(reservations.schedule.reason).appendTo(vertical_layout_div);
 
                   // *Building the schedule's duration div:
                   let schedules_duration_div = $('<div>').addClass('schedule-duration-output').appendTo(schedules_li);
 
                   // *Building and setting the schedule start date:
-                  let start_date = new Date(element.schedule.start_date);
+                  let start_date = new Date(reservations.schedule.start_date);
                   let schedules_start_date = $('<span>').text(df.asShortDate(start_date));
                   schedules_start_date.appendTo(schedules_duration_div);
 
                   // *Building and setting the schedule start time:
-                  let start_time = new Date(element.schedule.start_date);
+                  let start_time = new Date(reservations.schedule.start_date);
                   let schedules_start_time = $('<span>').addClass('secondary').text(df.asShorterTime(start_time));
                   schedules_start_time.appendTo(schedules_duration_div);
 
@@ -71,12 +84,12 @@ spa.onNavigate('schedules', (page, params) => {
                   $(icon).appendTo(schedules_duration_div);
 
                   // *Building and setting the schedule end time:
-                  let end_time = new Date(element.schedule.end_date);
+                  let end_time = new Date(reservations.schedule.end_date);
                   let schedules_end_time = $('<span>').addClass('secondary').text(df.asShorterTime(end_time));
                   schedules_end_time.appendTo(schedules_duration_div);
 
                   // *Building and setting the schedule end date:
-                  let end_date = new Date(element.schedule.end_date);
+                  let end_date = new Date(reservations.schedule.end_date);
                   let schedules_end_date = $('<span>').text(df.asShortDate(end_date));
                   schedules_end_date.appendTo(schedules_duration_div);
                });
@@ -90,8 +103,8 @@ spa.onNavigate('schedules', (page, params) => {
                });
 
             })
-            .fail((xhr, textStatus, err) => {
-            console.log(textStatus);
+            .fail(xhr => {
+               console.log(xhr.responseJSON);
             });
       }
 
@@ -99,8 +112,9 @@ spa.onNavigate('schedules', (page, params) => {
       $('#schedules-create-done-fab').on('click', function(){
          let id = params.id;
          let date = params.date;
+
          // *Sending the id of the vehicle by parameter:
-         spa.navigateTo('schedule-create', {id: id});
+         spa.navigateTo('schedule-create', {id: id, date: date});
       });
    } else {
       // *Is not diferent of null ou undefined:
@@ -114,9 +128,17 @@ spa.onNavigate('schedules', (page, params) => {
 // *Defining ul like empty after unload the page:
 spa.onUnload('schedules', (page) => {
 
-   // *Wiping and removing the event click from ul:
-   $('#schedules-list').empty().off('click');
+   // *Removing the list's empty class and the click listener:
+   $('#schedules-list')
+      .removeClass('empty')
+      .off('click');
+
+   // *Removing all list items:
+   $('#schedules-list > li').remove();
 
    // *Removing the event click from button:
    $('#schedules-create-done-fab').off('click');
+
+   // *Hiding the 'Add schedules' FAB:
+   $('#schedules-create-done-fab').show();
 });

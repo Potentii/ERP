@@ -14,7 +14,7 @@ function onAuthenticated(req, res, next){
    let key_header = req.get('Access-Key');
 
    // *Querying for the user with the given key header as login:
-   pooler.query('select * from ?? where ?? = ? limit 1', ['user_view', 'login', key_header])
+   pooler.query('select * from ?? where ?? = ? limit 1', ['user_insensitive_view', 'login', key_header])
       .then(result => {
          // *If there's no error:
          // *Checking if there is any entry:
@@ -52,7 +52,7 @@ function exposeAccessId(req, res, next){
    let key_header = req.get('Access-Key');
 
    // *Querying for the user with the given key header as login:
-   pooler.query('select ?? from ?? where ?? = ? limit 1', ['id', 'user_view', 'login', key_header])
+   pooler.query('select ?? from ?? where ?? = ? limit 1', ['id', 'user_insensitive_view', 'login', key_header])
       .then(result => {
          // *If there's no error:
          // *Checking if there is any entry:

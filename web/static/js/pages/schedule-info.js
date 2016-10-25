@@ -13,7 +13,7 @@ spa.onNavigate('schedule-info', (page, params) => {
          // *If true:
          // *Listing the reserve info of that vehicle:
          request.getSchedule(id)
-            .done((data, textStatus, xhr) => {
+            .done(data => {
 
                // *Setting the schedule reason:
                $('#schedule-info-reason').text(data.reason);
@@ -40,7 +40,7 @@ spa.onNavigate('schedule-info', (page, params) => {
 
                // *Showing the vehicle in app bar:
                request.getVehicle(data.id_vehicle_fk)
-                  .done((data, textStatus, xhr) => {
+                  .done(data => {
 
                      // *Setting the vehicle's photo:
                      $('#schedule-info-vehicle-photo').css('background-image', 'url(' + rest_url + '/media/v/p/' + data.photo + ')');
@@ -52,19 +52,19 @@ spa.onNavigate('schedule-info', (page, params) => {
                      $('#schedule-info-vehicle-description').text(data.type + " - " + data.year + " - " + data.manufacturer);
 
                   })
-                  .fail((xhr, textStatus, err) => {
-                     console.log(textStatus);
+                  .fail(xhr => {
+                     console.log(xhr.responseJSON);
                   });
 
                   // *Showing the user in app bar:
                   request.getUser(data.id_user_fk)
-                     .done((data, textStatus, xhr) => {
+                     .done(data => {
 
                         // *Setting the user's username:
                         $('#schedule-info-user-name').text(data.name);
                      })
-                     .fail((xhr, textStatus, err) => {
-                        console.log(textStatus);
+                     .fail(xhr => {
+                        console.log(xhr.responseJSON);
                      });
             });
 

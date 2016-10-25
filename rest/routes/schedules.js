@@ -247,17 +247,17 @@ function erase(req, res, next){
    // *Querying this schedule's user:
    pooler.query('select ?? from ?? where ?? = ?', ['id_user_fk', 'schedule', 'id', id])
       .then(referenced_user_result => {
-         // *Querying the request owner's admin status:
-         pooler.query('select ?? from ?? where ?? = ?', ['admin', 'user', 'id', owner_id])
-            .then(admin_result => {
+         // *Querying the request owner's manage schedule status:
+         pooler.query('select ?? from ?? where ?? = ?', ['permission_schedules', 'user', 'id', owner_id])
+            .then(permission_schedules_result => {
                // *Checking if the user could be found:
-               if(admin_result.rows.length){
+               if(permission_schedules_result.rows.length){
                   // *If they could be found:
                   // *Checking if the schedule could be found:
                   if(referenced_user_result.rows.length){
                      // *If it could:
-                     // *Checking if the user is an admin, but if not, checking if the user is the same as the one referenced by this schedule:
-                     if(admin_result.rows[0].admin || referenced_user_result.rows[0].id_user_fk === owner_id){
+                     // *Checking if the user has permission to manage schedules, but if not, checking if the user is the same as the one referenced by this schedule:
+                     if(permission_schedules_result.rows[0].permission_schedules || referenced_user_result.rows[0].id_user_fk === owner_id){
                         // *If they're:
                         // *Deleting the resource from database:
                         pooler.query('delete from ?? where ?? = ?', ['schedule', 'id', id])

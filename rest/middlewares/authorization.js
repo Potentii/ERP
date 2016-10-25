@@ -24,8 +24,8 @@ module.exports = (permission) => {
          return;
       }
 
-      // *Querying for an entry with the given key(login) and permission:
-      pooler.query('select count(*) as counting from ?? where ?? = ? and ?? = ?', ['user_permission_view', 'user_login', key_header, 'permission_title', permission])
+      // *Querying for an entry with the given key(login) and the given permission set to true:
+      pooler.query('select count(*) as counting from ?? where ?? = ? and ?? = ?', ['user', 'login', key_header, permission, true])
          .then(result => {
             // *Checking if the user has the needed clearance:
             if(result.rows[0].counting){

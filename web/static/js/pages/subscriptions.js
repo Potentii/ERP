@@ -14,5 +14,10 @@ spa.subscribe(new Page('schedule-info'));
 spa.subscribe(new Page('schedule-create'));
 spa.subscribe(new Page('schedule-update'));
 
+spa.subscribe(new Page('users'));
+spa.subscribe(new Page('user-info'));
+spa.subscribe(new Page('user-create'));
+spa.subscribe(new Page('user-update'));
+
 // *Setting the fallback page:
 spa.setFallbackPage('fallback');

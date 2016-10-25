@@ -9,10 +9,13 @@ spa.onNavigate('', (page, params) => {
       // *If true:
       // *Listing the vehicles:
       request.getVehicles()
-         .done((data, textStatus, xhr) => {
+         .done(data => {
 
             // *Building the vehicle's ul:
             let card_ul = $('#vehicles-list');
+
+            // *Checking if the list is empty, adding the empty class if it is:
+            if(!data.length) card_ul.addClass('empty');
 
             // *Iterating and creating the vehicles list:
             data.forEach((vehicle, index) => {
@@ -20,6 +23,9 @@ spa.onNavigate('', (page, params) => {
                // *Building the vehicle's li:
                let card_li = $('<li>');
                card_li.attr('data-id', vehicle.id).addClass('card box raised').appendTo(card_ul);
+
+               // *Checking if the vehicle is inactive, adding the inactive class if it is:
+               if(!vehicle.active) card_li.addClass('inactive');
 
                // *Building the vehicle's div:
                let horizontal_layout_div = $('<div>').addClass('info flex-horizontal-layout').appendTo(card_li);
@@ -46,6 +52,16 @@ spa.onNavigate('', (page, params) => {
 
                // *Building the schedule's balls and add amount of the schedules number:
                requestSchedules(vehicle.id, button_ul);
+
+               // *Hiding the vehicle photo:
+               image_div.css('visibility', 'hidden');
+               // *Setting an offset timer:
+               setTimeout(() => {
+                  // *Showing up the vehicle photo:
+                  image_div.css('visibility', 'visible');
+                  // *Playing the inflate animation:
+                  anim.inflate(image_div);
+               }, index * 125);
             });
 
             // *Clicking on a vehicle's li:
@@ -56,8 +72,8 @@ spa.onNavigate('', (page, params) => {
                spa.navigateTo('vehicle-info', {id: id});
             });
          })
-         .fail((xhr, textStatus, err) => {
-            console.log(textStatus);
+         .fail(xhr => {
+            console.log(xhr.responseJSON);
          });
    }
 
@@ -73,8 +89,13 @@ spa.onNavigate('', (page, params) => {
 // *When user left the page:
 spa.onUnload('', (page) => {
 
-   // *Wiping and removing the event click from ul:
-   $('#vehicles-list').empty().off('click');
+   // *Removing the list's empty class and the click listener:
+   $('#vehicles-list')
+      .removeClass('empty')
+      .off('click');
+
+   // *Removing all list items:
+   $('#vehicles-list > li').remove();
 
    // *Removing the event click:
    $('#vehicles-list .schedules').off('click');
@@ -104,7 +125,7 @@ function requestSchedules(id, button_ul) {
 
       // *Retrieving the quantity of reservations on a date:
       request.getVehiclesReservationsOnDate(id, df.asMysqlDate(date))
-         .done((data, textStatus, xhr) => {
+         .done(data => {
             // *Printing the quantity of reservations:
             button_schedule.text(data.length);
          });
@@ -138,4 +159,18 @@ function getNextDays(days_quantity, from_date){
       vet.push(next_date);
    }
    return vet;
+}
+
+
+
+/**
+ * Adds hours given a timestamp
+ * @param {Date} date     The date object
+ * @param {number} hours  The ammount of hours to add
+ * @author Guilherme Reginaldo Ruella
+ * @return {Date}  The new date with the added hours
+ */
+function addHours(date, hours){
+   date = new Date(date);
+   return new Date(date.setHours(date.getHours() + hours));
 }

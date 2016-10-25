@@ -1,0 +1,29 @@
+#auth-section{
+   position: fixed;
+   width: 100%;
+   height: 100%;
+   background: var(--primary-color);
+   z-index: 16;
+}
+
+#auth-section > div{
+   margin: 8% auto;
+}
+
+#auth-section > div > *{
+   margin: 0 auto 3em auto;
+}
+
+#auth-section span{
+   font-size: 1.3em;
+   color: var(--accent-color-contrast);
+}
+
+#auth-section .mdl-spinner{
+   width: 5em;
+   height: 5em;
+}
+
+#auth-section .mdl-spinner__circle{
+   border: 4px solid var(--accent-color-contrast);
+}

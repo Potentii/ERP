@@ -55,6 +55,54 @@ body{
 
 
 /* ========== * ========== * ========== * ==========
+ * Default animations
+ * ========== * ========== * ========== * ==========
+ */
+/**
+ * Fading in:
+ */
+.fade-in{
+	animation: fade-in;
+	animation-duration: 0.2s;
+	animation-timing-function: ease;
+	animation-fill-mode: forwards;
+}
+@keyframes fade-in{
+	0% {opacity: 0;}
+	100% {opacity: 1;}
+}
+
+/**
+ * Fading out:
+ */
+.fade-out{
+	animation: fade-out;
+	animation-duration: 0.2s;
+	animation-timing-function: ease;
+	animation-fill-mode: forwards;
+}
+@keyframes fade-out{
+	0% {opacity: 1;}
+	100% {opacity: 0;}
+}
+
+/**
+ * Inflation:
+ */
+.inflate{
+	animation: inflate;
+	animation-duration: 0.2s;
+	animation-timing-function: ease;
+	animation-fill-mode: forwards;
+}
+@keyframes inflate{
+	0% {transform: scale(0.2, 0.2);}
+	100% {transform: scale(1, 1);}
+}
+
+
+
+/* ========== * ========== * ========== * ==========
  * Util classes
  * ========== * ========== * ========== * ==========
  */
@@ -69,11 +117,11 @@ body{
 	z-index: 8;
 }
 .app-bar > *{
-	padding: 1.5em;
+	padding: 1.25em;
 	vertical-align: middle;
 }
 .app-bar:nth-child(1n+2) > *{
-	padding: 0 1.5em 1em 1.5em;
+	padding: 0.5em 1.5em 0.5em 1.5em;
 	font-size: 0.9em;
 }
 .app-bar.flex-horizontal-layout{
@@ -85,15 +133,15 @@ body{
 .app-bar .fab{
 	display: inline-block;
 
-	min-height: 2.6em;
-	min-width: 2.6em;
-	max-height: 2.6em;
-	max-width: 2.6em;
+	min-height: 2.4em;
+	min-width: 2.4em;
+	max-height: 2.4em;
+	max-width: 2.4em;
 
 	padding: 0;
 	margin: 0.5em;
 
-	font-size: 1.2em;
+	font-size: 1.1em;
 	background: none !important;
 	box-shadow: none;
 }
@@ -191,47 +239,164 @@ body{
 /**
  * Navigation drawer
  */
-.drawer{
+.drawer-overlay{
 	position: fixed;
-	display: block;
-	height: 100%;
-	width: 0;
-	background: #fff;
-	margin-left: -100%;
-	z-index: 12;
-	transition: margin-left 0.2s ease;
-}
-.drawer.right-shifted{
-	width: 24em;
-	max-width: 100%;
-	margin-left: 0;
-	transition: margin-left 0.2s ease;
-}
-.drawer > *{
-	display: block;
-	width: 100%;
-
-	text-align: left;
-	transition: background-color 0.3s ease;
-}
-.drawer > button, .drawer > a{
-	color: var(--bg-color-contrast-faded);
-	font-size: 1.1em;
-	padding: 1.2em;
-}
-.drawer > button:hover, .drawer > a:hover{
-	background-color: rgba(0, 0, 0, 0.07);
-}
-.drawer > .selected::before{
-	content: '';
-	position: absolute;
 	top: 0;
 	left: 0;
-	width: 5px;
+	width: 100%;
 	height: 100%;
+	background: rgba(0, 0, 0, 0.6);
+	z-index: 10;
+}
+.drawer{
+	display: flex;
+   flex-direction: column;
+	position: relative;
+	width: 80%;
+	height: 100%;
+	background: var(--bg-color);
+	transform: translateX(-80%);
+}
+.drawer > *{
+	width: 100%;
+}
 
+/**
+ * Drawer login info:
+ */
+.drawer-login-canvas{
+	flex-shrink: 0;
+	height: 11em;
+	margin-bottom: 3em;
 	background: var(--primary-color);
 }
+.drawer-login-info{
+	display: flex;
+	align-items: flex-end;
+
+	position: absolute;
+	width: 100%;
+	height: auto;
+	padding: 0 1em;
+	bottom: -2.5em;
+
+	overflow: visible;
+}
+.drawer-login-info > .round-thumbnail{
+	border: 3px solid var(--bg-color);
+	min-width: 5em;
+	min-height: 5em;
+}
+.drawer-login-info .x-name{
+	display: inline-block;
+	font-size: 1.2em;
+	color: var(--primary-color-contrast);
+	vertical-align: bottom;
+}
+.drawer-login-info .x-space{
+	margin: 0.5em 0;
+}
+.drawer-login-info .x-login{
+	flex-shrink: 0;
+	font-size: 1em;
+	/* (.drawer-user-info > .round-thumbnail(min-height)) - (drawer-user-info .x-space (margin))*/
+	height: 2em;
+	color: var(--bg-color-contrast-faded);
+}
+
+/**
+ * Drawer navigation:
+ */
+.drawer-navigation{
+	flex-grow: 1;
+	padding: 0.5em 0;
+	overflow-y: auto;
+}
+.drawer-navigation > button{
+	width: 100%;
+	padding: 1.5em 2.5em;
+	margin: 0.5em 0;
+	text-align: left;
+	transition: background 0.2s ease;
+}
+.drawer-navigation > button:hover{
+	background: rgba(0, 0, 0, 0.08);
+}
+.drawer-navigation > button > *{
+	vertical-align: middle;
+}
+.drawer-navigation > button > .material-icons{
+	color: var(--bg-color-contrast-icon);
+	font-size: 1.7em;
+	margin-right: 1em
+}
+.drawer-navigation > button > span{
+	font-size: 1.2em;
+	color: var(--bg-color-contrast);
+}
+
+/**
+ * Drawer animations:
+ */
+@keyframes drawerShow{
+	0% {
+		opacity: 0;
+		transform: translateX(-80%);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+@keyframes drawerHide{
+	0% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translateX(-80%);
+	}
+}
+
+@media (orientation: landscape) and (min-width: 500px){
+	.drawer{
+		width: 26em;
+		transform: translateX(-26em);
+	}
+}
+@media (orientation: landscape) and (max-height: 500px){
+	.drawer{
+		width: 70%;
+		transform: translateX(-70%);
+	}
+	.drawer-login-canvas{
+		height: 4em;
+	}
+}
+
+.drawer-overlay:not(.active){
+	animation: fade-out;
+	animation-timing-function: ease;
+	animation-fill-mode: forwards;
+}
+.drawer:not(.active){
+	animation: drawerHide;
+	animation-timing-function: ease;
+	animation-fill-mode: forwards;
+}
+
+.drawer-overlay.active{
+	animation: fade-in;
+	animation-timing-function: ease;
+	animation-fill-mode: forwards;
+}
+.drawer.active{
+	animation: drawerShow;
+	animation-timing-function: ease;
+	animation-fill-mode: forwards;
+}
+
 
 
 /*
@@ -287,6 +452,7 @@ body{
 .size-2{min-width: 2em; max-width: 2em; width: 2em; min-height: 2em; max-height: 2em; height: 2em;}
 .size-3{min-width: 3em; max-width: 3em; width: 3em; min-height: 3em; max-height: 3em; height: 3em;}
 .size-4{min-width: 4em; max-width: 4em; width: 4em; min-height: 4em; max-height: 4em; height: 4em;}
+.size-5{min-width: 5em; max-width: 5em; width: 5em; min-height: 5em; max-height: 5em; height: 5em;}
 .size-6{min-width: 6em; max-width: 6em; width: 6em; min-height: 6em; max-height: 6em; height: 6em;}
 
 .thumbnailed-info > .round-thumbnail{
@@ -306,6 +472,9 @@ body{
 	transition-delay: 0.2s;
 	transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.fab-container > .fab.raised{
+	box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.3);
+}
 div.raised, main.raised, nav.raised, section.raised{
 	box-shadow: 0 3px 6px -3px rgba(0, 0, 0, 0.3);
 }
@@ -316,7 +485,7 @@ header.raised{
 	box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.3);
 }
 button.raised:active, a.raised:active, .dragging.raised {
-	box-shadow: 0 6px 11px 0 rgba(0, 0, 0, 0.2);
+	box-shadow: 0 6px 11px 0 rgba(0, 0, 0, 0.3);
 	transition-delay: 0s;
 }
 
@@ -393,7 +562,7 @@ button.raised:active, a.raised:active, .dragging.raised {
  */
 .form > .row{
 	display: flex;
-	align-items: top;
+	align-items: flex-start;
 	justify-content: flex-start;
 
 	max-width: 100%;
@@ -410,6 +579,9 @@ button.raised:active, a.raised:active, .dragging.raised {
 .form > .row > .material-icons{
 	padding-right: 1.5em;
 	color: var(--bg-color-contrast-icon);
+}
+.form > .row:not(.mdl-input-row) > .material-icons{
+	margin-top: 0.1em;
 }
 
 
@@ -465,6 +637,80 @@ button.raised:active, a.raised:active, .dragging.raised {
 
 
 
+/* ========== * ========== * ========== * ==========
+ * Sensitive output
+ * ========== * ========== * ========== * ==========
+ */
+.sensitive-output{
+	text-align: left;
+}
+.sensitive-output:hover > *{
+	cursor: pointer;
+}
+
+.sensitive-output > .labeled-output{
+	display: inline-block;
+	visibility: hidden;
+	opacity: 0;
+	transform: translateY(1em);
+
+	transition: opacity, visibility, transform, 0.2s ease;
+}
+.sensitive-output:focus > .labeled-output{
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+}
+
+.sensitive-output > .material-icons{
+	position: absolute;
+	opacity: 1;
+	visibility: visible;
+	color: var(--bg-color-contrast-icon);
+	transform: translateY(0);
+
+	transition: opacity, visibility, transform, 0.2s ease;
+}
+.sensitive-output:focus > .material-icons{
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(1em);
+}
+
+
+
+/* ========== * ========== * ========== * ==========
+ * Radio button group
+ * ========== * ========== * ========== * ==========
+ */
+.radio-group > *{
+	display: block;
+}
+.radio-group > input[type="radio"]:nth-of-type(n+3), .radio-group > .mdl-radio:nth-of-type(n+3){
+	margin-top: 2em;
+}
+
+
+
+/* ========== * ========== * ========== * ==========
+ * Checkbox group
+ * ========== * ========== * ========== * ==========
+ */
+.checkbox-group > input[type="checkbox"]:nth-of-type(n+3), .checkbox-group > .mdl-checkbox:nth-of-type(n+3){
+	margin-top: 2em;
+}
+
+
+
+/* ========== * ========== * ========== * ==========
+ * Boolean output group
+ * ========== * ========== * ========== * ==========
+ */
+.boolean-output-group > div:nth-of-type(n+2){
+	margin-top: 2em;
+}
+
+
 
 /* ========== * ========== * ========== * ==========
  * List default text
@@ -493,13 +739,13 @@ li .secondary{
 .list{
 	/*padding: 1em 0;*/
 }
-.list > li, .grid > li{
+.list > li, .grid > li, .list > .empty-list-text{
 	position: relative;
 	display: block;
 	opacity: 1;
    transition: opacity, background, 0.3s ease;
 }
-.list > li{
+.list > li, .list > .empty-list-text{
 	padding: 1.2em 1em;
 }
 .grid > li{
@@ -538,6 +784,26 @@ li .secondary{
 	height: 100%;
 	background: rgba(0, 0, 0, 0.5);
 	z-index: 1;
+}
+
+.list.empty > .empty-list-text{
+	display: block;
+}
+.list:not(.empty) > .empty-list-text{
+	display: none;
+}
+.list.empty > .empty-list-text{
+	text-align: center;
+	color: var(--bg-color-contrast);
+	font-size: 1.1em;
+}
+@media (orientation: landscape){
+	.list.empty > .empty-list-text{
+		width: 50%;
+		min-width: 30em;
+		margin-right: auto;
+		margin-left: auto;
+	}
 }
 
 .list-fab{
@@ -679,11 +945,11 @@ li .secondary{
 }
 
 .dialogs:not(.active){
-	animation: dialogContainerFadeOff;
+	animation: dialogOverlayFadeOff;
 	animation-timing-function: ease;
 }
 .dialogs.active{
-	animation: dialogContainerFadeIn;
+	animation: dialogOverlayFadeIn;
 	animation-timing-function: ease;
 	animation-fill-mode: forwards;
 }
@@ -712,21 +978,13 @@ li .secondary{
 	}
 }
 
-@keyframes dialogContainerFadeIn{
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
+@keyframes dialogOverlayFadeIn{
+	0% {opacity: 0;}
+	100% {opacity: 1;}
 }
-@keyframes dialogContainerFadeOff{
-	0% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 0;
-	}
+@keyframes dialogOverlayFadeOff{
+	0% {opacity: 1;}
+	100% {opacity: 0;}
 }
 
 

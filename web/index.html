@@ -4,6 +4,7 @@
       <!-- * Meta * -->
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width"/>
+      <meta name="theme-color" content="#5E35B1">
 
 
       <!-- * CSS * -->
@@ -21,6 +22,8 @@
 
       <!-- * Pages * -->
       <link rel="stylesheet" href="./static/css/all.css">
+      <link rel="stylesheet" href="./static/css/fallback.css">
+      <link rel="stylesheet" href="./static/css/auth.css">
       <link rel="stylesheet" href="./static/css/login.css">
       <link rel="stylesheet" href="./static/css/vehicles.css">
       <link rel="stylesheet" href="./static/css/schedules.css">
@@ -44,7 +47,12 @@
 
       <script src="./static/js/date-format/date-format.js"></script>
 
+      <script src="./static/js/anim/anim.js"></script>
+
       <script src="./static/js/snack/snack.js"></script>
+
+      <script src="./static/js/drawer/drawer.js"></script>
+      <script src="./static/js/drawer/setup.js"></script>
 
       <script src="./static/js/dialog/Dialog.js"></script>
       <script src="./static/js/dialog/dialogger.js"></script>
@@ -60,22 +68,30 @@
 
       <script src="./static/js/file-encoder/file-encoder.js"></script>
 
+      <script src="./static/js/mdl/mdl-util.js"></script>
+
       <!-- * Dialogs * -->
       <script src="./static/js/dialogs/default-notice.js"></script>
       <script src="./static/js/dialogs/default-consent.js"></script>
       <script src="./static/js/dialogs/default-retry.js"></script>
       <script src="./static/js/dialogs/user-picker.js"></script>
+      <script src="./static/js/dialogs/vehicle-picker.js"></script>
 
       <!-- * Pages * -->
+      <script src="./static/js/pages/splash.js"></script>
       <script src="./static/js/pages/login.js"></script>
       <script src="./static/js/pages/index.js"></script>
       <script src="./static/js/pages/vehicle-info.js"></script>
       <script src="./static/js/pages/vehicle-update.js"></script>
+      <script src="./static/js/pages/schedule-date-validation.js"></script>
       <script src="./static/js/pages/schedule-create.js"></script>
       <script src="./static/js/pages/schedules.js"></script>
       <script src="./static/js/pages/schedule-info.js"></script>
       <script src="./static/js/pages/schedule-update.js"></script>
       <script src="./static/js/pages/vehicle-create.js"></script>
+      <script src="./static/js/pages/users.js"></script>
+      <script src="./static/js/pages/user-update.js"></script>
+      <script src="./static/js/pages/user-create.js"></script>
 
       <title>Eiger</title>
    </head>
@@ -84,10 +100,59 @@
 
 
       <!--
-      Authorization Page
+      Navigation drawer
+      -->
+      <div id="drawer-overlay" class="drawer-overlay">
+         <nav id="drawer" class="drawer raised">
+
+            <!-- * Login info section * -->
+            <div class="raised drawer-login-canvas">
+               <div class="drawer-login-info thumbnailed-info">
+                  <!-- * User photo * -->
+                  <div id="drawer-login-info-photo" class="round-thumbnail raised"></div>
+                  <!-- * User name and login section * -->
+                  <div class="flex-vertical-layout">
+                     <!-- * User name * -->
+                     <span id="drawer-login-info-name" class="x-name"><!-- [user name] --></span>
+                     <!-- * Spacer * -->
+                     <div class="x-space"></div>
+                     <!-- * User login * -->
+                     <span id="drawer-login-info-login" class="x-login"><!-- [user login] --></span>
+                  </div>
+               </div>
+            </div>
+
+            <!-- * Navigation list * -->
+            <div class="drawer-navigation vertical-layout">
+               <button type="button" class="mdl-js-button mdl-js-ripple-effect" onclick="spa.navigateTo('users')"><i class="material-icons">people</i><span>Users</span></button>
+               <button type="button" class="mdl-js-button mdl-js-ripple-effect" onclick="spa.navigateTo('reservations')"><i class="material-icons">event</i><span>Schedules</span></button>
+               <button type="button" class="mdl-js-button mdl-js-ripple-effect" onclick="spa.navigateTo('')"><i class="material-icons">directions_car</i><span>Vehicles</span></button>
+
+               <div class="horizontal-separator"></div>
+
+               <button type="button" class="mdl-js-button mdl-js-ripple-effect" onclick="spa.navigateTo('settings')"><i class="material-icons">settings</i><span>Settings</span></button>
+               <button type="button" class="mdl-js-button mdl-js-ripple-effect" onclick="spa.navigateTo('about-us')"><i class="material-icons">info</i><span>About us</span></button>
+            </div>
+         </nav>
+      </div>
+
+
+
+      <!--
+      Load splash overlay
+      -->
+      <div id="load-overlay"></div>
+
+
+
+      <!--
+      Authentication Page
       -->
       <section id="auth-section" data-page="auth">
-         auth
+         <div class="vertical-layout">
+            <span>Authenticating</span>
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+         </div>
       </section>
 
 
@@ -96,7 +161,9 @@
       Fallback Page
       -->
       <section id="fallback-section" data-page="fallback">
-         404<br/>Page Not Found
+         <div class="vertical-layout">
+            <span>Page not found</span>
+         </div>
       </section>
 
 
@@ -141,13 +208,14 @@
       -->
       <section id="vehicles-section" data-page="">
          <header class="app-bar flex-horizontal-layout tinted raised">
-            <button type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">menu</button>
+            <button type="button" onclick="drawer.open()" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">menu</button>
             <span>Eiger</span>
-            <button type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab right">today</button>
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab right">today</button>
          </header>
 
          <!-- Vehicles' cards list -->
          <ul id="vehicles-list" class="list content-before-fab">
+            <span class="empty-list-text box card raised" data-intl="empty-list-text-vehicles"></span>
             <!-- Example of a vehicle card -->
             <!--
             <li data-id="1" class="card box raised">
@@ -205,7 +273,7 @@
 
          <!-- Add FAB -->
          <div class="fab-container">
-            <button id="vehicles-add-fab" type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">add</button>
+            <button id="vehicles-add-fab" type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">add</button>
          </div>
       </section>
 
@@ -217,16 +285,16 @@
       <section id="vehicle-info-section" data-page="vehicle-info">
          <!-- Appbar -->
          <header class="app-bar flex-horizontal-layout tinted">
-            <button type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
             <span data-intl="vehicle-info-header"></span>
          </header>
 
          <!-- Sub appbar -->
-         <header class="app-bar flex-horizontal-layout tinted raised vehicle-info-app-bar">
+         <header class="app-bar tinted raised vehicle-info-app-bar">
 
             <!-- Vehicle appbar info -->
             <div class="flex-horizontal-layout">
-               <div id="vehicle-info-photo" class="round-thumbnail size-3"></div>
+               <div id="vehicle-info-photo" class="inflate round-thumbnail size-3"></div>
                <div class="vertical-layout">
                   <span id="vehicle-info-title" class="primary"><!--[title] - [plate]--></span>
                   <span id="vehicle-info-description" class="secondary"><!--[year] - [manufacturer] - [type]--></span>
@@ -234,26 +302,26 @@
             </div>
 
             <!-- Delete FAB -->
-            <button id="vehicle-info-delete-fab" type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab boundary right">delete</button>
+            <button id="vehicle-info-delete-fab" type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab boundary right">delete</button>
          </header>
 
 
          <!-- Vehicles' info form -->
          <form id="vehicle-info-form" class="form content-before-fab">
             <!-- Active status output true -->
-            <div class="row">
+            <div class="row active-true-container">
                <i class="material-icons">lock_open</i>
                <div class="vertical-layout">
-                  <label class="output-label" data-intl="vehicle-info-active-true"></label>
+                  <label class="output-label" data-intl="vehicle-info-active"></label>
                   <span id="vehicle-info-active-true" class="labeled-output" data-intl="vehicle-info-active-true"></span>
                </div>
             </div>
 
             <!-- Active status output false -->
-            <div class="row">
+            <div class="row active-false-container">
                <i class="material-icons">lock_outline</i>
                <div class="vertical-layout">
-                  <label class="output-label" data-intl="vehicle-info-active-false"></label>
+                  <label class="output-label" data-intl="vehicle-info-active"></label>
                   <span id="vehicle-info-active-false" class="labeled-output" data-intl="vehicle-info-active-false"></span>
                </div>
             </div>
@@ -283,7 +351,7 @@
 
          <!-- Edit FAB -->
          <div class="fab-container">
-            <button id="vehicle-info-edit-fab" type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">edit</button>
+            <button id="vehicle-info-edit-fab" type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">edit</button>
          </div>
       </section>
 
@@ -295,18 +363,18 @@
       <section id="vehicle-create-section" data-page="vehicle-create">
          <!-- Appbar -->
          <header class="app-bar flex-horizontal-layout tinted">
-            <button type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
             <span data-intl="vehicle-create-header"></span>
          </header>
 
          <!-- Sub appbar -->
-         <header class="app-bar flex-horizontal-layout tinted raised vehicle-info-app-bar">
+         <header class="app-bar tinted raised vehicle-info-app-bar">
 
             <!-- Vehicle appbar -->
             <div class="flex-horizontal-layout">
 
                <!-- Photo input -->
-               <div class="round-thumbnail-image-input round-thumbnail size-3 raised">
+               <div class="inflate round-thumbnail-image-input round-thumbnail size-3 raised">
                   <input id="vehicle-create-pic" type="file" accept="image/*" form="vehicle-create-form">
                   <button type="button" class="material-icons mdl-js-button mdl-js-ripple-effect" onclick="$('#vehicle-create-pic').click()">add_a_photo</button>
                </div>
@@ -377,7 +445,7 @@
             <div class="row mdl-input-row">
                <i class="material-icons">_</i>
                <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input id="vehicle-create-renavam" class="mdl-textfield__input" type="text" pattern="\S{11}" title="12345678912" required="true">
+                  <input id="vehicle-create-renavam" class="mdl-textfield__input" type="text" pattern="\d{11}" title="12345678912" required="true">
                   <label class="mdl-textfield__label" for="vehicle-create-renavam" data-intl="vehicle-create-renavam"></label>
                </span>
             </div>
@@ -386,7 +454,7 @@
 
          <!-- Done FAB -->
          <div class="fab-container">
-            <button type="submit" form="vehicle-create-form" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">done</button>
+            <button id="vehicle-create-done-fab" type="submit" form="vehicle-create-form" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">done</button>
          </div>
       </section>
 
@@ -398,18 +466,18 @@
       <section id="vehicle-update-section" data-page="vehicle-update">
          <!-- Appbar -->
          <header class="app-bar flex-horizontal-layout tinted">
-            <button type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
             <span data-intl="vehicle-update-header"></span>
          </header>
 
          <!-- Sub appbar -->
-         <header class="app-bar flex-horizontal-layout tinted raised vehicle-info-app-bar">
+         <header class="app-bar tinted raised vehicle-info-app-bar">
 
             <!-- Vehicle appbar -->
             <div class="flex-horizontal-layout">
 
                <!-- Photo input -->
-               <div class="round-thumbnail-image-input round-thumbnail size-3 raised">
+               <div class="inflate round-thumbnail-image-input round-thumbnail size-3 raised">
                   <input id="vehicle-update-pic" type="file" accept="image/*" form="vehicle-update-form">
                   <button type="button" class="material-icons mdl-js-button mdl-js-ripple-effect" onclick="$('#vehicle-update-pic').click()">add_a_photo</button>
                </div>
@@ -480,7 +548,7 @@
             <div class="row mdl-input-row">
                <i class="material-icons">_</i>
                <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input id="vehicle-update-renavam" class="mdl-textfield__input" type="text" pattern="\S{11}" title="12345678912" required="true">
+                  <input id="vehicle-update-renavam" class="mdl-textfield__input" type="text" pattern="\d{11}" title="12345678912" required="true">
                   <label class="mdl-textfield__label" for="vehicle-update-renavam" data-intl="vehicle-update-renavam"></label>
                </span>
             </div>
@@ -489,7 +557,7 @@
 
          <!-- Done FAB -->
          <div class="fab-container">
-            <button type="submit" form="vehicle-update-form" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">done</button>
+            <button id="vehicle-update-done-fab" type="submit" form="vehicle-update-form" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">done</button>
          </div>
       </section>
 
@@ -501,16 +569,16 @@
       <section id="schedules-section" data-page="schedules">
          <!-- Appbar -->
          <header class="app-bar flex-horizontal-layout tinted">
-            <button type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
             <span data-intl="schedules-header"></span>
          </header>
 
          <!-- Sub appbar -->
-         <header class="app-bar flex-horizontal-layout tinted raised vehicle-info-app-bar">
+         <header class="app-bar tinted raised vehicle-info-app-bar">
 
             <!-- Vehicle appbar info -->
             <div class="flex-horizontal-layout">
-               <div id="schedules-vehicle-photo" class="round-thumbnail size-3"></div>
+               <div id="schedules-vehicle-photo" class="inflate round-thumbnail size-3"></div>
                <div class="vertical-layout">
                   <span id="schedules-vehicle-title" class="primary"><!--[title] - [plate]--></span>
                   <span id="schedules-vehicle-description" class="secondary"><!--[year] - [manufacturer] - [type]--></span>
@@ -522,6 +590,7 @@
 
          <!-- Vehicle's schedules list -->
          <ul id="schedules-list" class="list content-before-fab">
+            <span class="empty-list-text box card raised" data-intl="empty-list-text-schedules"></span>
             <!-- Example of an item -->
             <!--
             <li class="card box raised">
@@ -542,7 +611,7 @@
 
          <!-- Add FAB -->
          <div class="fab-container">
-            <button id="schedules-create-done-fab" type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">add</button>
+            <button id="schedules-create-done-fab" style="display: none;" type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">add</button>
          </div>
       </section>
 
@@ -554,16 +623,16 @@
       <section id="schedule-info-section" data-page="schedule-info">
          <!-- Appbar -->
          <header class="app-bar flex-horizontal-layout tinted">
-            <button type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
             <span data-intl="schedule-info-header"></span>
          </header>
 
          <!-- Vehicle sub appbar -->
-         <header class="app-bar flex-horizontal-layout tinted raised vehicle-info-app-bar">
+         <header class="app-bar tinted vehicle-info-app-bar">
 
             <!-- Vehicle appbar info -->
             <div class="flex-horizontal-layout">
-               <div id="schedule-info-vehicle-photo" class="round-thumbnail size-3"></div>
+               <div id="schedule-info-vehicle-photo" class="inflate round-thumbnail size-3"></div>
                <div class="vertical-layout">
                   <span id="schedule-info-vehicle-title" class="primary"><!--[title] - [plate]--></span>
                   <span id="schedule-info-vehicle-description" class="secondary"><!--[year] - [manufacturer] - [type]--></span>
@@ -573,21 +642,42 @@
          </header>
 
          <!-- User sub appbar -->
-         <header class="app-bar flex-horizontal-layout tinted raised user-info-app-bar">
+         <header class="app-bar tinted raised vehicle-info-app-bar">
 
             <!-- User appbar info -->
             <div class="flex-horizontal-layout">
+               <div id="schedule-info-user-photo" class="inflate round-thumbnail size-3"></div>
                <div class="vertical-layout">
                   <span id="schedule-info-user-name" class="primary"><!--[user-name]--></span>
+                  <span id="schedule-info-user-login" class="secondary"><!--[login]--></span>
                </div>
             </div>
 
             <!-- Delete FAB -->
-            <button id="schedule-info-delete-fab" type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab boundary right">delete</button>
+            <button id="schedule-info-delete-fab" type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab boundary right">delete</button>
          </header>
 
          <!-- Schedule' info form -->
          <form id="schedule-info-form" class="form content-before-fab">
+
+            <!-- Confirmed status output false -->
+            <div class="row active-false-container">
+               <i class="material-icons">assignment_late</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="schedule-info-confirmed"></label>
+                  <span id="schedule-info-confirmed-false" class="labeled-output" data-intl="schedule-info-confirmed-false"></span>
+               </div>
+            </div>
+
+            <!-- Confirmed status output true -->
+            <div class="row active-true-container">
+               <i class="material-icons">assignment_turned_in</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="schedule-info-confirmed"></label>
+                  <span id="schedule-info-confirmed-true" class="labeled-output" data-intl="schedule-info-confirmed-true"></span>
+               </div>
+            </div>
+
             <!-- Reason output -->
             <div class="row">
                <i class="material-icons">feedback</i>
@@ -614,19 +704,31 @@
 
             <div class="horizontal-separator"></div>
 
-            <!-- Added date output -->
+            <!-- Owner output -->
             <div class="row">
                <i class="material-icons">today</i>
-               <div class="vertical-layout">
-                  <label class="output-label" data-intl="schedule-info-date"></label>
-                  <span id="schedule-info-date" class="labeled-output"><!--[date]--></span>
+               <div class="vertical-layout boolean-output-group">
+                  <div class="vertical-layout">
+                     <label class="output-label" data-intl="schedule-info-date"></label>
+                     <span id="schedule-info-date" class="labeled-output"><!--[date]--></span>
+                  </div>
+                  <div class="vertical-layout">
+                     <label class="output-label" data-intl="schedule-info-owner"></label>
+                     <div class="flex-horizontal-layout thumbnailed-info">
+                        <div id="schedule-info-owner-photo" class="round-thumbnail size-3"></div>
+                        <div class="vertical-layout">
+                           <span id="schedule-info-owner-name" class="primary"><!--[user-name]--></span>
+                           <span id="schedule-info-owner-login" class="secondary"><!--[login]--></span>
+                        </div>
+                     </div>
+                  </div>
                </div>
             </div>
          </form>
 
          <!-- Edit FAB -->
          <div class="fab-container">
-            <button id="schedule-info-edit-fab" type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">edit</button>
+            <button id="schedule-info-edit-fab" type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">edit</button>
          </div>
       </section>
 
@@ -638,16 +740,16 @@
       <section id="schedule-create-section" data-page="schedule-create">
          <!-- Appbar -->
          <header class="app-bar flex-horizontal-layout tinted">
-            <button type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
             <span data-intl="schedule-create-header"></span>
          </header>
 
          <!-- Vehicle sub appbar -->
-         <header class="app-bar flex-horizontal-layout tinted raised vehicle-info-app-bar">
+         <header id="schedule-create-vehicle-app-bar" class="app-bar clickable-app-bar mdl-js-button mdl-js-ripple-effect tinted vehicle-info-app-bar">
 
             <!-- Vehicle appbar info -->
             <div class="flex-horizontal-layout">
-               <div id="schedule-create-vehicle-photo" class="round-thumbnail size-3"></div>
+               <div id="schedule-create-vehicle-photo" class="inflate round-thumbnail size-3"></div>
                <div class="vertical-layout">
                   <span id="schedule-create-vehicle-title" class="primary"><!--[title] - [plate]--></span>
                   <span id="schedule-create-vehicle-description" class="secondary"><!--[year] - [manufacturer] - [type]--></span>
@@ -657,12 +759,14 @@
          </header>
 
          <!-- User sub appbar -->
-         <header id="schedule-create-user-app-bar" class="app-bar flex-horizontal-layout tinted raised user-info-app-bar">
+         <header id="schedule-create-user-app-bar" class="app-bar clickable-app-bar mdl-js-button mdl-js-ripple-effect tinted raised vehicle-info-app-bar">
 
             <!-- User appbar info -->
-            <div class="flex-horizontal-layout">
+            <div class="flex-horizontal-layout thumbnailed-info">
+               <div id="schedule-create-user-photo" class="inflate round-thumbnail size-3"></div>
                <div class="vertical-layout">
                   <span id="schedule-create-user-name" class="primary"><!--[user-name]--></span>
+                  <span id="schedule-create-user-login" class="secondary"><!--[login]--></span>
                </div>
             </div>
 
@@ -671,12 +775,12 @@
          <!-- Schedule creation form -->
          <form id="schedule-create-form" class="form content-before-fab" autocomplete="off">
 
-            <!-- Manufacturer input -->
+            <!-- Reason input -->
             <div class="row mdl-input-row">
                <i class="material-icons">feedback</i>
                <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input id="schedule-create-reason" class="mdl-textfield__input" type="text" pattern=".*\S+.*" required="true">
-                  <label class="mdl-textfield__label" for="vehicle-create-reason" data-intl="schedule-create-reason"></label>
+                  <input id="schedule-create-reason" class="mdl-textfield__input" type="text" pattern=".*\S+.*">
+                  <label class="mdl-textfield__label" for="schedule-create-reason" data-intl="schedule-create-reason"></label>
                </span>
             </div>
 
@@ -687,7 +791,7 @@
                <i class="material-icons">schedule</i>
                <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                   <input id="schedule-create-start-date" class="mdl-textfield__input" type="date" pattern=".*\S+.*" required="true" data-date-format="dd.mm.YYYY">
-                  <label class="mdl-textfield__label" for="vehicle-create-start-date" data-intl="schedule-create-start-date"></label>
+                  <label class="mdl-textfield__label" for="schedule-create-start-date" data-intl="schedule-create-start-date"></label>
                </span>
             </div>
 
@@ -696,7 +800,7 @@
                <i class="material-icons">_</i>
                <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                   <input id="schedule-create-start-time" class="mdl-textfield__input" type="time" pattern=".*\S+.*" required="true">
-                  <label class="mdl-textfield__label" for="vehicle-create-start-time" data-intl="schedule-create-start-time"></label>
+                  <label class="mdl-textfield__label" for="schedule-create-start-time" data-intl="schedule-create-start-time"></label>
                </span>
             </div>
 
@@ -706,21 +810,21 @@
                <i class="material-icons">more_vert</i>
             </div>
 
-            <!-- End date input -->
-            <div class="row mdl-input-row">
-               <i class="material-icons">_</i>
-               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input id="schedule-create-end-date" class="mdl-textfield__input" type="date" pattern=".*\S+.*" required="true">
-                  <label class="mdl-textfield__label" for="vehicle-create-end-date" data-intl="schedule-create-end-date"></label>
-               </span>
-            </div>
-
             <!-- End time input -->
             <div class="row mdl-input-row">
                <i class="material-icons">_</i>
                <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                   <input id="schedule-create-end-time" class="mdl-textfield__input" type="time" pattern=".*\S+.*" required="true">
-                  <label class="mdl-textfield__label" for="vehicle-create-end-time" data-intl="schedule-create-end-time"></label>
+                  <label class="mdl-textfield__label" for="schedule-create-end-time" data-intl="schedule-create-end-time"></label>
+               </span>
+            </div>
+
+            <!-- End date input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="schedule-create-end-date" class="mdl-textfield__input" type="date" pattern=".*\S+.*" required="true">
+                  <label class="mdl-textfield__label" for="schedule-create-end-date" data-intl="schedule-create-end-date"></label>
                </span>
             </div>
 
@@ -728,7 +832,7 @@
 
          <!-- Done FAB -->
          <div class="fab-container">
-            <button type="submit" form="schedule-create-form" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">done</button>
+            <button id="schedule-create-done-fab" type="submit" form="schedule-create-form" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">done</button>
          </div>
       </section>
 
@@ -740,16 +844,16 @@
       <section id="schedule-update-section" data-page="schedule-update">
          <!-- Appbar -->
          <header class="app-bar flex-horizontal-layout tinted">
-            <button type="button" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
             <span data-intl="schedule-update-header"></span>
          </header>
 
          <!-- Vehicle sub appbar -->
-         <header class="app-bar flex-horizontal-layout tinted raised vehicle-info-app-bar">
+         <header id="schedule-update-vehicle-app-bar" class="app-bar clickable-app-bar mdl-js-button mdl-js-ripple-effect tinted vehicle-info-app-bar">
 
             <!-- Vehicle appbar info -->
             <div class="flex-horizontal-layout">
-               <div id="schedule-update-vehicle-photo" class="round-thumbnail size-3"></div>
+               <div id="schedule-update-vehicle-photo" class="inflate round-thumbnail size-3"></div>
                <div class="vertical-layout">
                   <span id="schedule-update-vehicle-title" class="primary"><!--[title] - [plate]--></span>
                   <span id="schedule-update-vehicle-description" class="secondary"><!--[year] - [manufacturer] - [type]--></span>
@@ -759,12 +863,14 @@
          </header>
 
          <!-- User sub appbar -->
-         <header id="schedule-update-user-app-bar" class="app-bar flex-horizontal-layout tinted raised user-info-app-bar">
+         <header id="schedule-update-user-app-bar" class="app-bar clickable-app-bar mdl-js-button mdl-js-ripple-effect tinted raised vehicle-info-app-bar">
 
             <!-- User appbar info -->
-            <div class="flex-horizontal-layout">
+            <div class="flex-horizontal-layout thumbnailed-info">
+               <div id="schedule-update-user-photo" class="inflate round-thumbnail size-3"></div>
                <div class="vertical-layout">
                   <span id="schedule-update-user-name" class="primary"><!--[user-name]--></span>
+                  <span id="schedule-update-user-login" class="secondary"><!--[login]--></span>
                </div>
             </div>
 
@@ -773,13 +879,35 @@
          <!-- Schedule creation form -->
          <form id="schedule-update-form" class="form content-before-fab" autocomplete="off">
 
-            <!-- Manufacturer input -->
+            <!-- Reason input -->
             <div class="row mdl-input-row">
                <i class="material-icons">feedback</i>
                <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input id="schedule-update-reason" class="mdl-textfield__input" type="text" pattern=".*\S+.*" required="true">
-                  <label class="mdl-textfield__label" for="vehicle-update-reason" data-intl="schedule-update-reason"></label>
+                  <input id="schedule-update-reason" class="mdl-textfield__input" type="text" pattern=".*\S+.*">
+                  <label class="mdl-textfield__label" for="schedule-update-reason" data-intl="schedule-update-reason"></label>
                </span>
+            </div>
+
+            <div class="horizontal-separator"></div>
+
+            <!-- Confirmed status input -->
+            <div class="row">
+               <i class="material-icons">assignment</i>
+               <div class="radio-group">
+                  <label class="output-label" data-intl="schedule-update-confirmed"></label>
+
+                  <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="schedule-update-confirmed-false">
+                     <input id="schedule-update-confirmed-false" name="schedule-update-confirmed" type="radio" class="mdl-radio__button" checked>
+                     <span class="mdl-radio__label" data-intl="schedule-update-confirmed-false"></span>
+                  </label>
+                  <label class="output-label detail-label" data-intl="schedule-update-confirmed-false-detail"></label>
+
+                  <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="schedule-update-confirmed-true">
+                     <input id="schedule-update-confirmed-true" name="schedule-update-confirmed" type="radio" class="mdl-radio__button">
+                     <span class="mdl-radio__label" data-intl="schedule-update-confirmed-true"></span>
+                  </label>
+                  <label class="output-label detail-label" data-intl="schedule-update-confirmed-true-detail"></label>
+               </div>
             </div>
 
             <div class="horizontal-separator"></div>
@@ -789,7 +917,7 @@
                <i class="material-icons">schedule</i>
                <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                   <input id="schedule-update-start-date" class="mdl-textfield__input" type="date" pattern=".*\S+.*" required="true" data-date-format="dd.mm.YYYY">
-                  <label class="mdl-textfield__label" for="vehicle-update-start-date" data-intl="schedule-update-start-date"></label>
+                  <label class="mdl-textfield__label" for="schedule-update-start-date" data-intl="schedule-update-start-date"></label>
                </span>
             </div>
 
@@ -798,7 +926,7 @@
                <i class="material-icons">_</i>
                <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                   <input id="schedule-update-start-time" class="mdl-textfield__input" type="time" pattern=".*\S+.*" required="true">
-                  <label class="mdl-textfield__label" for="vehicle-update-start-time" data-intl="schedule-update-start-time"></label>
+                  <label class="mdl-textfield__label" for="schedule-update-start-time" data-intl="schedule-update-start-time"></label>
                </span>
             </div>
 
@@ -808,21 +936,21 @@
                <i class="material-icons">more_vert</i>
             </div>
 
-            <!-- End date input -->
-            <div class="row mdl-input-row">
-               <i class="material-icons">_</i>
-               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input id="schedule-update-end-date" class="mdl-textfield__input" type="date" pattern=".*\S+.*" required="true">
-                  <label class="mdl-textfield__label" for="vehicle-update-end-date" data-intl="schedule-update-end-date"></label>
-               </span>
-            </div>
-
             <!-- End time input -->
             <div class="row mdl-input-row">
                <i class="material-icons">_</i>
                <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                   <input id="schedule-update-end-time" class="mdl-textfield__input" type="time" pattern=".*\S+.*" required="true">
-                  <label class="mdl-textfield__label" for="vehicle-update-end-time" data-intl="schedule-update-end-time"></label>
+                  <label class="mdl-textfield__label" for="schedule-update-end-time" data-intl="schedule-update-end-time"></label>
+               </span>
+            </div>
+
+            <!-- End date input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="schedule-update-end-date" class="mdl-textfield__input" type="date" pattern=".*\S+.*" required="true">
+                  <label class="mdl-textfield__label" for="schedule-update-end-date" data-intl="schedule-update-end-date"></label>
                </span>
             </div>
 
@@ -830,7 +958,532 @@
 
          <!-- Done FAB -->
          <div class="fab-container">
-            <button type="submit" form="schedule-update-form" class="material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">done</button>
+            <button id="schedule-update-done-fab" type="submit" form="schedule-update-form" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">done</button>
+         </div>
+      </section>
+
+
+
+      <!--
+      Users Page
+      -->
+      <section id="users-section" data-page="users">
+         <!-- Appbar -->
+         <header class="app-bar flex-horizontal-layout tinted">
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
+            <span data-intl="users-header"></span>
+         </header>
+
+         <!-- Vehicle's schedules list -->
+         <ul id="users-list" class="list content-before-fab">
+            <span class="empty-list-text box card raised" data-intl="empty-list-text-users"></span>
+            <!-- Example of an item -->
+            <!--
+            <li class="row card box raised">
+               <div class="flex-horizontal-layout thumbnailed-info">
+                  <div class="round-thumbnail size-3" style="background-image: url(http://localhost:3000/media/v/p/01.jpg)"></div>
+                  <div class="vertical-layout">
+                     <span class="primary">[User-name]</span>
+                     <span class="secondary">[Login]</span>
+                  </div>
+               </div>
+            </li>
+            -->
+         </ul>
+
+         <!-- Add FAB -->
+         <div class="fab-container">
+            <button id="users-create-done-fab" type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">add</button>
+         </div>
+      </section>
+
+
+
+      <!--
+      User info Page
+      -->
+      <section id="user-info-section" data-page="user-info">
+         <!-- Appbar -->
+         <header class="app-bar flex-horizontal-layout tinted">
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
+            <span data-intl="user-info-header"></span>
+         </header>
+
+         <!-- Sub appbar -->
+         <header class="app-bar flex-horizontal-layout tinted raised vehicle-info-app-bar">
+
+            <!-- User appbar info -->
+            <div class="flex-horizontal-layout">
+               <div id="user-info-photo" class="inflate round-thumbnail size-3"></div>
+               <div class="vertical-layout">
+                  <span id="user-info-title" class="primary"><!--[user-name]--></span>
+                  <span id="user-info-description" class="secondary"><!--[login]--></span>
+               </div>
+            </div>
+
+            <!-- Delete FAB -->
+            <button id="user-info-delete-fab" type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab boundary right">delete</button>
+         </header>
+
+         <!-- User info form -->
+         <form id="user-info-form" class="form content-before-fab">
+
+            <!-- Active status output true -->
+            <div class="row active-true-container">
+               <i class="material-icons">lock_open</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="user-info-active"></label>
+                  <span id="user-info-active-true" class="labeled-output" data-intl="user-info-active-true"></span>
+               </div>
+            </div>
+
+            <!-- Active status output false -->
+            <div class="row active-false-container">
+               <i class="material-icons">lock_outline</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="user-info-active"></label>
+                  <span id="user-info-active-false" class="labeled-output" data-intl="user-info-active-false"></span>
+               </div>
+            </div>
+
+            <!-- E-mail output -->
+            <div class="row">
+               <i class="material-icons">account_circle</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="user-info-email"></label>
+                  <span id="user-info-email" class="labeled-output"><!--[email]--></span>
+               </div>
+            </div>
+
+            <!-- Phone output -->
+            <div class="row">
+               <i class="material-icons">_</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="user-info-phone"></label>
+                  <span id="user-info-phone" class="labeled-output"><!--[phone]--></span>
+               </div>
+            </div>
+
+            <!-- Department output -->
+            <div class="row">
+               <i class="material-icons">_</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="user-info-department"></label>
+                  <span id="user-info-department" class="labeled-output"><!--[department]--></span>
+               </div>
+            </div>
+
+            <div class="horizontal-separator"></div>
+
+            <!-- Pass output -->
+            <div class="row">
+               <i class="material-icons">vpn_key</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="user-info-pass"></label>
+                  <button type="button" class="sensitive-output">
+                     <i class="material-icons">visibility</i>
+                     <span id="user-info-pass" class="labeled-output"><!--[pass]--></span>
+                  </button>
+               </div>
+            </div>
+
+            <div class="horizontal-separator"></div>
+
+            <!-- CPF output -->
+            <div class="row">
+               <i class="material-icons">chrome_reader_mode</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="user-info-cpf"></label>
+                  <button type="button" class="sensitive-output">
+                     <i class="material-icons">visibility</i>
+                     <span id="user-info-cpf" class="labeled-output"><!--[cpf]--></span>
+                  </button>
+               </div>
+            </div>
+
+            <!-- Driver license output -->
+            <div class="row">
+               <i class="material-icons">_</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="user-info-driver-license"></label>
+                  <button type="button" class="sensitive-output">
+                     <i class="material-icons">visibility</i>
+                     <span id="user-info-driver-license" class="labeled-output"><!--[driver-license]--></span>
+                  </button>
+               </div>
+            </div>
+
+            <!-- Driver license expiration date output -->
+            <div class="row">
+               <i class="material-icons">_</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="user-info-driver-license-exp"></label>
+                  <button type="button" class="sensitive-output">
+                     <i class="material-icons">visibility</i>
+                     <span id="user-info-driver-license-exp" class="labeled-output"><!--[driver-license-exp]--></span>
+                  </button>
+               </div>
+            </div>
+
+            <div class="horizontal-separator"></div>
+
+            <!-- Permissions output -->
+            <div class="row">
+               <i class="material-icons">security</i>
+               <div class="vertical-layout boolean-output-group">
+                  <label class="output-label" data-intl="user-info-permission"></label>
+
+                  <div id="user-info-permission-none" class="vertical-layout">
+                     <span class="labeled-output" data-intl="user-info-permission-none"></span>
+                     <label class="output-label detail-label" data-intl="user-info-permission-none-detail"></label>
+                  </div>
+
+                  <div id="user-info-permission-schedules" class="vertical-layout">
+                     <span class="labeled-output" data-intl="user-info-permission-schedules"></span>
+                     <label class="output-label detail-label" data-intl="user-info-permission-schedules-detail"></label>
+                  </div>
+
+                  <div id="user-info-permission-users" class="vertical-layout">
+                     <span class="labeled-output" data-intl="user-info-permission-users"></span>
+                     <label class="output-label detail-label" data-intl="user-info-permission-users-detail"></label>
+                  </div>
+
+                  <div id="user-info-permission-vehicles" class="vertical-layout">
+                     <span class="labeled-output" data-intl="user-info-permission-vehicles"></span>
+                     <label class="output-label detail-label" data-intl="user-info-permission-vehicles-detail"></label>
+                  </div>
+               </div>
+            </div>
+
+            <div class="horizontal-separator"></div>
+
+            <!-- Added date output -->
+            <div class="row">
+               <i class="material-icons">today</i>
+               <div class="vertical-layout">
+                  <label class="output-label" data-intl="user-info-date"></label>
+                  <span id="user-info-date" class="labeled-output"><!--[date]--></span>
+               </div>
+            </div>
+         </form>
+
+         <!-- Edit FAB -->
+         <div class="fab-container">
+            <button id="user-info-edit-fab" type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">edit</button>
+         </div>
+      </section>
+
+
+
+      <!--
+      User create Page
+      -->
+      <section id="user-create-section" data-page="user-create">
+         <!-- Appbar -->
+         <header class="app-bar flex-horizontal-layout tinted">
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
+            <span data-intl="user-create-header"></span>
+         </header>
+
+         <!-- Sub appbar -->
+         <header class="app-bar flex-horizontal-layout tinted raised vehicle-info-app-bar">
+
+            <!-- User appbar -->
+            <div class="flex-horizontal-layout">
+
+               <!-- Photo input -->
+               <div class="inflate round-thumbnail-image-input round-thumbnail size-3 raised">
+                  <input id="user-create-pic" type="file" accept="image/*" form="user-create-form">
+                  <button type="button" class="material-icons mdl-js-button mdl-js-ripple-effect" onclick="$('#user-create-pic').click()">add_a_photo</button>
+               </div>
+
+               <!-- Name input -->
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-create-name" class="mdl-textfield__input" type="text" form="user-create-form" pattern=".*\S+.*" required="true">
+                  <label class="mdl-textfield__label" for="user-create-name" data-intl="user-create-name"></label>
+               </span>
+            </div>
+
+         </header>
+
+         <!-- User creation form -->
+         <form id="user-create-form" class="form content-before-fab" autocomplete="off">
+
+            <!-- Login input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">account_circle</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-create-login" class="mdl-textfield__input" type="text" pattern="\S+" required="true">
+                  <label class="mdl-textfield__label" for="user-create-login" data-intl="user-create-login"></label>
+               </span>
+            </div>
+
+            <!-- Pass input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-create-pass" class="mdl-textfield__input" type="password" required="true">
+                  <label class="mdl-textfield__label" for="user-create-pass" data-intl="user-create-pass"></label>
+               </span>
+            </div>
+
+            <!-- E-mail input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-create-email" class="mdl-textfield__input" type="email" pattern="\w+@\w+\.\w+\.{0,1}\w*" required="true">
+                  <label class="mdl-textfield__label" for="user-create-email" data-intl="user-create-email"></label>
+               </span>
+            </div>
+
+            <!-- Phone input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-create-phone" class="mdl-textfield__input" type="number" required="true">
+                  <label class="mdl-textfield__label" for="user-create-phone" data-intl="user-create-phone"></label>
+               </span>
+            </div>
+
+            <!-- Department input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-create-department" class="mdl-textfield__input" type="text" pattern=".*\S+.*" required="true">
+                  <label class="mdl-textfield__label" for="user-create-department" data-intl="user-create-department"></label>
+               </span>
+            </div>
+
+            <div class="horizontal-separator"></div>
+
+            <!-- Active status input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">lock</i>
+               <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="user-create-active">
+                  <input id="user-create-active" type="checkbox" class="mdl-checkbox__input" checked>
+                  <span class="mdl-checkbox__label" data-intl="user-create-active"></span>
+               </label>
+            </div>
+
+            <div class="horizontal-separator"></div>
+
+            <!-- CPF input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">chrome_reader_mode</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-create-cpf" class="mdl-textfield__input" type="text" pattern="\d{11}" required="true">
+                  <label class="mdl-textfield__label" for="user-create-cpf" data-intl="user-create-cpf"></label>
+               </span>
+            </div>
+
+            <!-- Driver license input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-create-driver-license" class="mdl-textfield__input" type="text" pattern="\d{7,11}" required="true">
+                  <label class="mdl-textfield__label" for="user-create-driver-license" data-intl="user-create-driver-license"></label>
+               </span>
+            </div>
+
+            <!-- Driver license's expiration date input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-create-driver-license-exp" class="mdl-textfield__input" type="date" required="true">
+                  <label class="mdl-textfield__label" for="user-create-driver-license-exp" data-intl="user-create-driver-license-exp"></label>
+               </span>
+            </div>
+
+            <div class="horizontal-separator"></div>
+
+            <!-- Permissions status input -->
+            <div class="row">
+               <i class="material-icons">security</i>
+               <div class="checkbox-group">
+                  <label class="output-label" data-intl="user-create-permission"></label>
+
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="user-create-permission-schedules">
+                     <input id="user-create-permission-schedules" type="checkbox" class="mdl-checkbox__input">
+                     <span class="mdl-checkbox__label" data-intl="user-create-permission-schedules"></span>
+                  </label>
+                  <label class="output-label detail-label" data-intl="user-create-permission-schedules-detail"></label>
+
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="user-create-permission-users">
+                     <input id="user-create-permission-users" type="checkbox" class="mdl-checkbox__input">
+                     <span class="mdl-checkbox__label" data-intl="user-create-permission-users"></span>
+                  </label>
+                  <label class="output-label detail-label" data-intl="user-create-permission-users-detail"></label>
+
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="user-create-permission-vehicles">
+                     <input id="user-create-permission-vehicles" type="checkbox" class="mdl-checkbox__input">
+                     <span class="mdl-checkbox__label" data-intl="user-create-permission-vehicles"></span>
+                  </label>
+                  <label class="output-label detail-label" data-intl="user-create-permission-vehicles-detail"></label>
+               </div>
+            </div>
+
+         </form>
+
+         <!-- Done FAB -->
+         <div class="fab-container">
+            <button id="user-create-done-fab" type="submit" form="user-create-form" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">done</button>
+         </div>
+      </section>
+
+
+
+      <!--
+      User update Page
+      -->
+      <section id="user-update-section" data-page="user-update">
+         <!-- Appbar -->
+         <header class="app-bar flex-horizontal-layout tinted">
+            <button type="button" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">arrow_back</button>
+            <span data-intl="user-update-header"></span>
+         </header>
+
+         <!-- Sub appbar -->
+         <header class="app-bar flex-horizontal-layout tinted raised vehicle-info-app-bar">
+
+            <!-- User appbar -->
+            <div class="flex-horizontal-layout">
+
+               <!-- Photo input -->
+               <div class="inflate round-thumbnail-image-input round-thumbnail size-3 raised">
+                  <input id="user-update-pic" type="file" accept="image/*" form="user-update-form">
+                  <button type="button" class="material-icons mdl-js-button mdl-js-ripple-effect" onclick="$('#user-update-pic').click()">add_a_photo</button>
+               </div>
+
+               <!-- Name input -->
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-update-name" class="mdl-textfield__input" type="text" form="user-update-form" pattern=".*\S+.*" required="true">
+                  <label class="mdl-textfield__label" for="user-update-name" data-intl="user-update-name"></label>
+               </span>
+            </div>
+
+         </header>
+
+         <!-- User update form -->
+         <form id="user-update-form" class="form content-before-fab" autocomplete="off">
+
+            <!-- Login input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">account_circle</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-update-login" class="mdl-textfield__input" type="text" pattern="\S+" required="true">
+                  <label class="mdl-textfield__label" for="user-update-login" data-intl="user-update-login"></label>
+               </span>
+            </div>
+
+            <!-- Pass input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-update-pass" class="mdl-textfield__input" type="password" required="true">
+                  <label class="mdl-textfield__label" for="user-update-pass" data-intl="user-update-pass"></label>
+               </span>
+            </div>
+
+            <!-- E-mail input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-update-email" class="mdl-textfield__input" type="email" pattern="\w+@\w+\.\w+\.{0,1}\w*" required="true">
+                  <label class="mdl-textfield__label" for="user-update-email" data-intl="user-update-email"></label>
+               </span>
+            </div>
+
+            <!-- Phone input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-update-phone" class="mdl-textfield__input" type="number" required="true">
+                  <label class="mdl-textfield__label" for="user-update-phone" data-intl="user-update-phone"></label>
+               </span>
+            </div>
+
+            <!-- Department input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-update-department" class="mdl-textfield__input" type="text" pattern=".*\S+.*" required="true">
+                  <label class="mdl-textfield__label" for="user-update-department" data-intl="user-update-department"></label>
+               </span>
+            </div>
+
+            <div class="horizontal-separator"></div>
+
+            <!-- Active status input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">lock</i>
+               <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="user-update-active">
+                  <input id="user-update-active" type="checkbox" class="mdl-checkbox__input" checked>
+                  <span class="mdl-checkbox__label" data-intl="user-update-active"></span>
+               </label>
+            </div>
+
+            <div class="horizontal-separator"></div>
+
+            <!-- CPF input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">chrome_reader_mode</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-update-cpf" class="mdl-textfield__input" type="text" pattern="\d{11}" required="true">
+                  <label class="mdl-textfield__label" for="user-update-cpf" data-intl="user-update-cpf"></label>
+               </span>
+            </div>
+
+            <!-- Driver license input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-update-driver-license" class="mdl-textfield__input" type="text" pattern="\d{7,11}" required="true">
+                  <label class="mdl-textfield__label" for="user-update-driver-license" data-intl="user-update-driver-license"></label>
+               </span>
+            </div>
+
+            <!-- Driver license's expiration date input -->
+            <div class="row mdl-input-row">
+               <i class="material-icons">_</i>
+               <span class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input id="user-update-driver-license-exp" class="mdl-textfield__input" type="date" required="true">
+                  <label class="mdl-textfield__label" for="user-update-driver-license-exp" data-intl="user-update-driver-license-exp"></label>
+               </span>
+            </div>
+
+            <div class="horizontal-separator"></div>
+
+            <!-- Permissions status input -->
+            <div class="row">
+               <i class="material-icons">security</i>
+               <div class="checkbox-group">
+                  <label class="output-label" data-intl="user-update-permission"></label>
+
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="user-update-permission-schedules">
+                     <input id="user-update-permission-schedules" type="checkbox" class="mdl-checkbox__input">
+                     <span class="mdl-checkbox__label" data-intl="user-update-permission-schedules"></span>
+                  </label>
+                  <label class="output-label detail-label" data-intl="user-update-permission-schedules-detail"></label>
+
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="user-update-permission-users">
+                     <input id="user-update-permission-users" type="checkbox" class="mdl-checkbox__input">
+                     <span class="mdl-checkbox__label" data-intl="user-update-permission-users"></span>
+                  </label>
+                  <label class="output-label detail-label" data-intl="user-update-permission-users-detail"></label>
+
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="user-update-permission-vehicles">
+                     <input id="user-update-permission-vehicles" type="checkbox" class="mdl-checkbox__input">
+                     <span class="mdl-checkbox__label" data-intl="user-update-permission-vehicles"></span>
+                  </label>
+                  <label class="output-label detail-label" data-intl="user-update-permission-vehicles-detail"></label>
+               </div>
+            </div>
+
+         </form>
+
+         <!-- Done FAB -->
+         <div class="fab-container">
+            <button id="user-update-done-fab" type="submit" form="user-update-form" class="inflate material-icons mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored raised fab">done</button>
          </div>
       </section>
 
@@ -914,6 +1567,7 @@
 
             <!-- User picker list -->
             <ul class="list" id="user-picker-list">
+               <span class="empty-list-text box card raised" data-intl="empty-list-text-user-picker"></span>
                <!-- User picker row example -->
                <!--
                <li class="row vertical-layout">
@@ -944,6 +1598,7 @@
 
             <!-- Vehicle picker list -->
             <ul class="list" id="vehicle-picker-list">
+               <span class="empty-list-text box card raised" data-intl="empty-list-text-vehicle-picker"></span>
                <!-- Vehicle picker row example -->
                <!--
                <li class="row">

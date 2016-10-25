@@ -13,6 +13,8 @@
 #vehicles-list .info{
    align-items: center;
    flex-shrink: 0;
+}
+#vehicles-list .info *:hover{
 	cursor: pointer;
 }
 #vehicles-list .info .round-thumbnail{
@@ -70,11 +72,11 @@
       margin: 0;
    }
    #vehicles-list .schedules > li > *{
-      font-size: 0.7em;
+      font-size: 0.8em;
    }
    #vehicles-list .schedules > li > .round{
-      width: 2.5em;
-      height: 2.5em;
+      width: 3.4em;
+      height: 3.4em;
    }
 }
 
@@ -110,4 +112,20 @@
       width: 3em;
       height: 3em;
    }
+}
+
+
+/**
+ * Inactive vehicles
+ */
+#vehicles-list > .inactive{
+	opacity: 0.6;
+	box-shadow: none;
+	background: none;
+}
+#vehicles-list > .inactive > .vertical-line, #vehicles-list > .inactive > .horizontal-line{
+	visibility: hidden;
+}
+#vehicles-list > .inactive .schedules{
+	opacity: 0.5;
 }

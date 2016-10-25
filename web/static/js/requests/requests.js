@@ -16,7 +16,7 @@ const request = (function(){
    * @return {object} JSON The token and the user key
    * @author Ralf Pablo Braga Soares
    */
-   function retrieveAccessCredentials() {
+   function retrieveAccessInfo() {
       let token = JSON.parse(localStorage.getItem('token'));
       let key = JSON.parse(localStorage.getItem('key'));
       let id = JSON.parse(localStorage.getItem('id'));
@@ -30,16 +30,16 @@ const request = (function(){
    * @param  {object} data The token and the user key
    * @author Ralf Pablo Braga Soares
    */
-   function saveAuthentication(data) {
+   function saveAccessInfo({ id, token, key }) {
 
       // *Setting token as an access key to the token code in cache:
-      localStorage.setItem('token', JSON.stringify(data.token));
+      if(token) localStorage.setItem('token', JSON.stringify(token));
 
       // *Saving id as an access key to the id code in cache:
-      localStorage.setItem('id', JSON.stringify(data.user.id));
+      if(id) localStorage.setItem('id', JSON.stringify(id));
 
       // *Setting key as an access key to the key code in cache:
-      localStorage.setItem('key', JSON.stringify(data.user.login));
+      if(key) localStorage.setItem('key', JSON.stringify(key));
    }
 
 
@@ -54,7 +54,7 @@ const request = (function(){
    function getAuth(){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       return $.ajax({
          url: rest_url + '/auth',
@@ -74,7 +74,7 @@ const request = (function(){
    function getVehicle(id){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       return $.ajax({
          url: rest_url + '/api/v1/vehicles/' + id,
@@ -94,7 +94,7 @@ const request = (function(){
    function getSchedule(id){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       return $.ajax({
          url: rest_url + '/api/v1/schedules/' + id,
@@ -113,7 +113,7 @@ const request = (function(){
    function getSchedules(){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Requesting all schedules:
       return $.ajax({
@@ -133,7 +133,7 @@ const request = (function(){
    function getVehicles(){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Requesting all vehicles:
       return $.ajax({
@@ -153,7 +153,7 @@ const request = (function(){
    function getUsers(){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Requesting users:
       return $.ajax({
@@ -174,11 +174,32 @@ const request = (function(){
    function getUser(id){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Requesting user:
       return $.ajax({
          url: rest_url + '/api/v1/users/' + id,
+         method: 'GET',
+         headers: {'Access-Token': auth.token, 'Access-Key': auth.key}
+      });
+   }
+
+
+
+   /**
+    * Returns a user, given its id (Including all its sensitive data)
+    * @param  {number} id The user id
+    * @return {jqXHR}     The ajax request
+    * @author Guilherme Reginaldo Ruella
+    */
+   function getUserSensitive(id){
+
+      // *Getting the key and the token:
+      let auth = retrieveAccessInfo();
+
+      // *Requesting user:
+      return $.ajax({
+         url: rest_url + '/api/v1/users/' + id + '/sensitive',
          method: 'GET',
          headers: {'Access-Token': auth.token, 'Access-Key': auth.key}
       });
@@ -195,7 +216,7 @@ const request = (function(){
    function getVehiclesSchedules(id){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       return $.ajax({
          url: rest_url + '/api/v1/vehicles/' + id + '/schedules/',
@@ -215,7 +236,7 @@ const request = (function(){
    function getUsersSchedules(id){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       return $.ajax({
          url: rest_url + '/api/v1/users/' + id + '/schedules/',
@@ -235,7 +256,7 @@ const request = (function(){
    function getVehiclesReservations(id){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       return $.ajax({
          url: rest_url + '/api/v1/vehicles/' + id + '/reservations/',
@@ -256,7 +277,7 @@ const request = (function(){
    function getVehiclesReservationsOnDate(id, date){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       return $.ajax({
          url: rest_url + '/api/v1/vehicles/' + id + '/reservations/' + date,
@@ -276,7 +297,7 @@ const request = (function(){
    function getUsersReservations(id){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       return $.ajax({
          url: rest_url + '/api/v1/users/' + id + '/reservations/',
@@ -297,7 +318,7 @@ const request = (function(){
    function getUsersReservationsOnDate(id, date){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       return $.ajax({
          url: rest_url + '/api/v1/users/' + id + '/reservations/' + date,
@@ -336,7 +357,7 @@ const request = (function(){
    function postSchedule(object_data){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Sending the insert request:
       return $.ajax({
@@ -357,7 +378,7 @@ const request = (function(){
    function postUser(object_data){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Sending the insert request:
       return $.ajax({
@@ -378,7 +399,7 @@ const request = (function(){
    function postVehicle(object_data){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Sending the insert request:
       return $.ajax({
@@ -403,7 +424,7 @@ const request = (function(){
    function putUser(id, object_data){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Sending the update request:
       return $.ajax({
@@ -426,7 +447,7 @@ const request = (function(){
    function putVehicle(id, object_data){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Sending the update request:
       return $.ajax({
@@ -449,7 +470,7 @@ const request = (function(){
    function putSchedule(id, object_data){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Sending the update request:
       return $.ajax({
@@ -473,7 +494,7 @@ const request = (function(){
    function deleteAuth(){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Returning the request:
       return $.ajax({
@@ -494,7 +515,7 @@ const request = (function(){
    function deleteUser(id){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Sending the update request:
       return $.ajax({
@@ -516,7 +537,7 @@ const request = (function(){
    function deleteVehicle(id){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Sending the update request:
       return $.ajax({
@@ -538,7 +559,7 @@ const request = (function(){
    function deleteSchedule(id){
 
       // *Getting the key and the token:
-      let auth = retrieveAccessCredentials();
+      let auth = retrieveAccessInfo();
 
       // *Sending the update request:
       return $.ajax({
@@ -564,6 +585,7 @@ const request = (function(){
       getUsersReservationsOnDate: getUsersReservationsOnDate,
       getUser: getUser,
       getUsers: getUsers,
+      getUserSensitive: getUserSensitive,
 
       postAuth: postAuth,
       postSchedule: postSchedule,
@@ -579,7 +601,7 @@ const request = (function(){
       deleteVehicle: deleteVehicle,
       deleteSchedule: deleteSchedule,
 
-      retrieveAccessCredentials: retrieveAccessCredentials,
-      saveAuthentication: saveAuthentication
+      retrieveAccessInfo: retrieveAccessInfo,
+      saveAccessInfo: saveAccessInfo
    };
 })();
