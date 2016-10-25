@@ -72,25 +72,33 @@ spa.onNavigate('schedule-info', (page, params) => {
             // *removing scheduling
             $('#schedule-info-delete-fab').on('click', function(){
                let id = params.id;
+               dialogger.open('default-consent', {title: 'Schedule', message: 'You want to delete the vehicle'},
+                function(dialog, status, params){
 
-               // *Sending a request to delete the schedule:
-               request.deleteSchedule(id)
-                  .done((data, textStatus, xhr) => {
+                  if(status === dialogger.DIALOG_STATUS_POSITIVE){
 
-                  // *Navigating to index page:
-                  spa.navigateTo('');
-                  })
-                  .fail((xhr, textStatus, err) => {
-                     console.log(textStatus);
-                  });
+
+                     // *Sending a request to delete the schedule:
+                     request.deleteSchedule(id)
+                        .done((data, textStatus, xhr) => {
+                           // *Showing the snack with the message:
+                           // *Navigating to index page:
+                           spa.navigateTo('');
+                        })
+                        .fail((xhr, textStatus, err) => {
+                           console.log(textStatus);
+                        });
+
+                  }
                });
+            });
 
 
-               // *When a user to click in update button:
-               $('#schedule-info-edit-fab').on('click', function(){
-                  // *Sending the id of the schedule-update by parameter:
-                  spa.navigateTo('schedule-update', {id: id});
-               });
+            // *When a user to click in update button:
+            $('#schedule-info-edit-fab').on('click', function(){
+               // *Sending the id of the schedule-update by parameter:
+               spa.navigateTo('schedule-update', {id: id});
+            });
      }
    } else {
       // *Is not diferent of null ou undefined:
@@ -105,3 +113,19 @@ spa.onUnload('schedule-info', (page, params) => {
    $('#schedule-info-delete-fab').off('click');
    $('#schedule-info-edit-fab').off('click');
 });
+
+
+// *Caso der algum erro para deletar mostrar a message
+request.putSchedule(id)
+   .done((data, textStatus, xhr) => {
+
+      // *Showing the snack with the message:
+      snack.open('Schedule info', snack.TIME_SHORT);
+      // *Going to index page:
+
+      spa.navigateTo('');
+   })
+   .fail((xhr, textStatus, err) => {
+      console.log(textStatus);
+   });
+}
