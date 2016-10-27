@@ -50,22 +50,52 @@ spa.onNavigate('vehicle-info', (page, params) => {
             });
 
 
-         // *Clicking on a schedule's button:
-         $('#vehicle-info-delete-fab').on('click', function(){
-            let id = params.id;
+            // *Creating action to click the button:
+            $('#vehicle-info-delete-fab').on('click', function(){
+               let id = params.id;
 
-            // *Sending a request to delete the vehicle:
-            request.deleteVehicle(id)
-               .done((data, textStatus, xhr) => {
+                  // * Starts the vehicle of dialogue
+                  dialogger.open('default-consent', {title: srm.get('vechicle-delete-dialog-consent-submit-title'), message: srm.get('vechicle-delete-dialog-consent-submit-message')}, function(dialog, status, params){
 
-                  // *Navigating to index page:
-                  spa.navigateTo('');
-               })
-               .fail((xhr, textStatus, err) => {
-                  console.log(textStatus);
+                     // *When the status is positive:
+                     if(status === dialogger.DIALOG_STATUS_POSITIVE){
+
+                        // *Sending a request to delete the vehicle:
+                        request.deleteVehicle(id)
+                           .done((data, textStatus, xhr) => {
+
+                              // *Showing the snack with the message:
+                              snack.open(srm.get('Vechicle-delete-successful-snack'), snack.TIME_SHORT);
+
+                              // *Navigating to index page:
+                              spa.navigateTo('');
+                           })
+                           .fail(xhr => {
+                              // *Declaring an object to receiva a text to dialog:
+                              let text = {title: '', message: ''};
+
+                              // *Checking the error code:
+                              switch(xhr.responseJSON.err_code){
+
+                              // *When the user or schedule referenced does not exist:
+                              case 'ERR_NOT_FOUND':
+                                 text.title = srm.get('vehicle-delete-dialog-err-not-found-title');
+                                 text.message = srm.get('vehicle-delete-dialog-err-not-found-message');
+                                 break;
+
+                              // *When the selected schedule is not active:
+                              case 'ERR_REF_LEFT':
+                                 text.title = srm.get('vehicle-delete-dialog-err-ref-left-title');
+                                 text.message = srm.get('vehicle-delete-dialog-err-ref-left-message');
+                                 break;
+                              }
+
+                              // *Opening a dialog notice for the user:
+                              dialogger.open('default-notice', text);
+                           });
+                  }
                });
-         });
-
+            });
 
          // *When a user to click in update button:
          $('#vehicle-info-edit-fab').on('click', function(){

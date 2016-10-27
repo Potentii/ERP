@@ -69,25 +69,49 @@ spa.onNavigate('schedule-info', (page, params) => {
             });
 
 
-            // *removing scheduling
+            // *Reating action to click the button:
             $('#schedule-info-delete-fab').on('click', function(){
                let id = params.id;
-               dialogger.open('default-consent', {title: 'Schedule', message: 'You want to delete the vehicle'},
-                function(dialog, status, params){
 
-                  if(status === dialogger.DIALOG_STATUS_POSITIVE){
+                  // *Starts the vehicle of dialogue:
+                  dialogger.open('default-consent', {title: srm.get('schedule-delete-dialog-consent-submit-title'), message: srm.get('schedule-delete-dialog-consent-submit-message')}, function(dialog, status, params){
+
+                     // *When the status is positive:
+                     if(status === dialogger.DIALOG_STATUS_POSITIVE){
 
 
-                     // *Sending a request to delete the schedule:
-                     request.deleteSchedule(id)
-                        .done((data, textStatus, xhr) => {
-                           // *Showing the snack with the message:
-                           // *Navigating to index page:
-                           spa.navigateTo('');
-                        })
-                        .fail((xhr, textStatus, err) => {
-                           console.log(textStatus);
-                        });
+                        // *Sending a request to delete the schedule:
+                        request.deleteSchedule(id)
+                           .done((data, textStatus, xhr) => {
+                              // *Showing the snack with the message:
+                              snack.open(srm.get('schedule-delete-successful-snack'), snack.TIME_SHORT);
+
+                              // *Navigating to index page:
+                              spa.navigateTo('');
+                           })
+                           .fail(xhr => {
+                              // *Declaring an object to receiva a text to dialog:
+                              let text = {title: '', message: ''};
+
+                              // *Checking the error code:
+                              switch(xhr.responseJSON.err_code){
+
+                              // *When the user or schedule referenced does not exist:
+                              case 'ERR_NOT_FOUND':
+                                 text.title = srm.get('schedule-delete-dialog-err-not-found-title');
+                                 text.message = srm.get('schedule-delete-dialog-err-not-found-message');
+                                 break;
+
+                              // *When the selected schedule is not active:
+                              case 'ERR_NOT_AUTHORIZED':
+                                 text.title = srm.get('schedule-delete-dialog-err-not-authorized-title');
+                                 text.message = srm.get('schedule-delete-dialog-err-not-authorized-message');
+                                 break;
+                              }
+
+                              // *Opening a dialog notice for the user:
+                              dialogger.open('default-notice', text);
+                           });
 
                   }
                });
@@ -113,19 +137,3 @@ spa.onUnload('schedule-info', (page, params) => {
    $('#schedule-info-delete-fab').off('click');
    $('#schedule-info-edit-fab').off('click');
 });
-
-
-// *Caso der algum erro para deletar mostrar a message
-request.putSchedule(id)
-   .done((data, textStatus, xhr) => {
-
-      // *Showing the snack with the message:
-      snack.open('Schedule info', snack.TIME_SHORT);
-      // *Going to index page:
-
-      spa.navigateTo('');
-   })
-   .fail((xhr, textStatus, err) => {
-      console.log(textStatus);
-   });
-}
